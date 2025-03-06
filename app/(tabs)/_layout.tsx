@@ -48,15 +48,15 @@ const menuTab = () => {
             title: 'Bible Study',
             tabBarIcon: ({ color, size, focused }) => <MaterialCommunityIcons name="book-open-page-variant" size={25} color={color} />,
         }} />
-        <Tabs.Screen name='sermon-screen' 
+        <Tabs.Screen name='(sermon)' 
           options={{
             title: 'Sermon',
             tabBarIcon: ({ color, size, focused }) => <MaterialIcons name="perm-media" size={25} color={color} />,
         }} />
-        <Tabs.Screen name='profile-screen' 
+        <Tabs.Screen name='(events)' 
           options={{
-            title: 'Profile',
-            tabBarIcon: ({ color, size, focused }) => <Ionicons name="person" size={25} color={color} />,
+            title: 'Events',
+            tabBarIcon: ({ color, size, focused }) => <Ionicons name="calendar" size={25} color={color} />,
         }} />
  
     </Tabs>

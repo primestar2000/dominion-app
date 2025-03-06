@@ -1,17 +1,22 @@
 import { Image, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import InputField from '@/components/inputField';
 import { Link } from 'expo-router';
+import { useEffect, useState } from 'react';
+import LoaderComponent from '@/components/loaderComponent';
+import { supabase } from '@/utils/lib/superbase';
+import SubmitButton from '@/components/submit-button';
 
 
 const SignUp = () => {
+    const [errorBag, setErrorBag] = useState([])
     // const { setAuthenticatedUser } = useContext(AppContext);
-    // const [formInput, setFormInput] = useState({
-    //     name: "",
-    //     email: "",
-    //     password: "",
-    //     confirmPassword: ""
-    // });
-    // const [loading, setLoading] = useState(false);
+    const [formInput, setFormInput] = useState({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: ""
+    });
+    const [loading, setLoading] = useState(false);
 
     // const showToast = (type, text1, text2) => {
     //     Toast.show({
@@ -23,90 +28,87 @@ const SignUp = () => {
     //     });
     // };
 
-    // const validateForm = () => {
-    //     const { name, email, password, confirmPassword } = formInput;
-    //     if (!name) {
-    //         showToast('error', 'Name is required');
-    //         return false;
-    //     }
-    //     if (!email) {
-    //         showToast('error', 'Email is required');
-    //         return false;
-    //     }
-    //     if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email)) {
-    //         showToast('error', 'Invalid email address');
-    //         return false;
-    //     }
-    //     if (!password) {
-    //         showToast('error', 'Password is required');
-    //         return false;
-    //     }
-    //     if (password.length < 8) {
-    //         showToast('error', 'Password must be at least 8 characters long');
-    //         return false;
-    //     }
-    //     if (!confirmPassword) {
-    //         showToast('error', 'Confirm password is required');
-    //         return false;
-    //     }
-    //     if (confirmPassword !== password) {
-    //         showToast('error', 'Passwords do not match');
-    //         return false;
-    //     }
-    //     return true;
-    // };
+    const validateForm = () => {
+        const { name, email, password, confirmPassword } = formInput;
+        if (!name) {
+            // showToast('error', 'Name is required');
+            return false;
+        }
+        if (!email) {
+            // showToast('error', 'Email is required');
+            return false;
+        }
+        if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email)) {
+            // showToast('error', 'Invalid email address');
+            return false;
+        }
+        if (!password) {
+            // showToast('error', 'Password is required');
+            return false;
+        }
+        if (password.length < 8) {
+            // showToast('error', 'Password must be at least 8 characters long');
+            return false;
+        }
+        if (!confirmPassword) {
+            // showToast('error', 'Confirm password is required');
+            return false;
+        }
+        if (confirmPassword !== password) {
+            // showToast('error', 'Passwords do not match');
+            return false;
+        }
+        return true;
+    };
 
-    // const handleSubmit = () => {
-    //     if (validateForm()) {
-    //         initiateSignUp();
-    //     }
-    // };
+    const updateFormInput = (name:string, value:string) => {
+        setFormInput( prev => (
+            {
+                ...prev,
+                [name]: value
+            }
+        ))
+    }
+    const initiateSignUp = async () => {
+        const {email, password, name} = formInput;
+        const {
+            data: { session },
+            error,
+          } = await supabase.auth.signUp({
+            email: email,
+            password: password,
+          })
+        if (error) {
+            console.log('error',error)
+            return ;
+        }
+        console.log(session);
+        const {error:profileError} = await supabase.from('user_profile').upsert({
+            user_id: session?.user.id,
+            username: name,
+        })
+        setLoading(false);
+        if (profileError) {
+            console.log('profile error',profileError)
+            return
+        }
+       
+        // return {error, data};
+    }
+    const handleSubmit = () => {
+        setLoading(true);
+        if (validateForm()) {
+            initiateSignUp();
+        }
+    };
 
-    // const initiateSignUp = () => {
-    //     setLoading(true);
-    //     const { name, email, password } = formInput;
-
-    //     createUserWithEmailAndPassword(auth, email, password)
-    //         .then((userCredential) => {
-    //             const user = userCredential.user;
-    //             setAuthenticatedUser(user);
-    //             return updateCurrentUser(auth.currentUser, { displayName: name });
-    //         })
-    //         .then(() => {
-    //             setLoading(false);
-    //             showToast('success', 'Sign Up Successful', 'Welcome to the app!');
-    //         })
-    //         .catch((error) => {
-    //             setLoading(false);
-    //             let errorMessage;
-
-    //             switch (error.code) {
-    //                 case 'auth/email-already-in-use':
-    //                     errorMessage = 'This email address is already in use.';
-    //                     break;
-    //                 case 'auth/invalid-email':
-    //                     errorMessage = 'Please enter a valid email address.';
-    //                     break;
-    //                 case 'auth/weak-password':
-    //                     errorMessage = 'Password should be at least 6 characters.';
-    //                     break;
-    //                 default:
-    //                     errorMessage = error.message;
-    //             }
-    //             showToast('error', 'Sign Up Error', errorMessage);
-    //         });
-    // };
-
-    // const updateFormInput = (name, value) => {
-    //     setFormInput({ ...formInput, [name]: value });
-    // };
-
-    // useEffect(() => {
-    //     console.log(formInput);
-    // }, [formInput]);
+        useEffect(() => {
+        console.log(formInput);
+    }, [formInput]);
 
     return (
         <SafeAreaView style={{ flex: 1, width: "100%" }}>
+            <LoaderComponent isLoading={loading} />
             <ScrollView>
                 <View style={styles.frame}>
                     <View style={styles.logoFrame}>
@@ -118,30 +120,30 @@ const SignUp = () => {
 
                         <InputField
                             name="name"
-                            // onChangeText={(value) => updateFormInput('name', value)}
-                            onChangeText={()=>{}}
+                            onChangeText={(value) => updateFormInput('name', value)}
+                            // onChangeText={handleInputChange}
                             label="Name"
                             />
                         <InputField
                             name="email"
-                            onChangeText={()=>{}}
-                            // onChangeText={(value) => updateFormInput('email', value)}
+                            // onChangeText={handleInputChange}
+                            onChangeText={(value) => updateFormInput('email', value)}
                             label="Email Address"
                             placeholder="user@email.com"
                             />
                         <InputField
-                            // onChangeText={(value) => updateFormInput('password', value)}
-                            onChangeText={()=>{}}
+                            onChangeText={(value) => updateFormInput('password', value)}
+                            // onChangeText={handleInputChange}
                             label="Password"
                             type="password"
                             />
                         <InputField
-                            onChangeText={()=>{}}
-                            // onChangeText={(value) => updateFormInput('confirmPassword', value)}
+                            // onChangeText={handleInputChange}
+                            onChangeText={(value) => updateFormInput('confirmPassword', value)}
                             label="Confirm Password"
                             type="password"
                         />
-                        {/* <SubmitButton onPress={handleSubmit} loading={loading} /> */}
+                        <SubmitButton onPress={handleSubmit} loading={loading} />
                         <Link href={'/(authentication)/sign-in'} asChild>
                             <TouchableOpacity>
                                 <Text style={styles.signUpLink}>Already An Existing User?</Text>

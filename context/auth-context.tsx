@@ -36,7 +36,7 @@ interface AuthProviderProps {
 
 // Create the provider component
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   // const [isOnboarded, setisOnboarded] = useState(false);
 

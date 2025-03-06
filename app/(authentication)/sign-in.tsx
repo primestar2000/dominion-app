@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import InputField from '@/components/inputField';
 import SubmitButton from '@/components/submit-button';
 import { Link } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 
 // import Toast from 'react-native-toast-message';
 // import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -18,47 +19,11 @@ const SignIn = ({ navigation }:{navigation: any}) => {
         text2: "",
     });
 
-    // useEffect(() => {
-    //     if (message.text1) {
-    //         Toast.show({
-    //             type: message.type,
-    //             text1: message.text1,
-    //             text2: message.text2,
-    //             text1Style: { fontSize: 20 },
-    //         });
-    //     }
-    // }, [message]);
-
-    // const alertMessage = ({ messageType, text1, text2 }) => {
-    //     setMessage({
-    //         type: messageType || "info",
-    //         text1,
-    //         text2,
-    //     });
-    // };
-
-    // const handleSubmit = () => {
-    //     if (!email || !password) {
-    //         alertMessage({ messageType: 'error', text1: 'Input Error', text2: 'Please fill all fields' });
-    //         return;
-    //     }
-
-    //     setLoading(true);
-
-    //     signInWithEmailAndPassword(auth, email, password).then(()=>{   
-    //         alertMessage({messageType: 'success', text1: 'success', text2: "Authenticated"})
-    //     }).catch((error)=>{
-    //         alertMessage({messageType: 'error', text1: 'Authentication Error', text2: error.message})
-    //     }).finally(
-    //         ()=>{
-    //             setLoading(false)
-    //         }
-    //     );
-    // };
-
+    
+    
     return (
         <SafeAreaView style={{ flex: 1, width: "100%" }}>   
-            <View style={styles.frame}>
+            <LinearGradient colors={['blue', 'skyblue']} style={styles.frame}>
                 <View style={styles.logoFrame}>
                     <Image style={styles.logo} source={require('../../assets/images/dcic-logo.png')} />
                 </View>
@@ -89,7 +54,7 @@ const SignIn = ({ navigation }:{navigation: any}) => {
                         <Text style={styles.signUpLink}>Forgot Password</Text>
                     </TouchableOpacity>
                 </View>
-            </View>
+            </LinearGradient>
             <StatusBar />
         </SafeAreaView>
     );

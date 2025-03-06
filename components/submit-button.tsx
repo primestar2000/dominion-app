@@ -53,6 +53,7 @@ export default SubmitButton;
 
 const styles = StyleSheet.create({
   button: {
+    width: '100%',
     height: 45,
     backgroundColor: 'blue',
     borderRadius: 50,

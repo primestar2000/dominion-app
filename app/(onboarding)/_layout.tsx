@@ -5,9 +5,9 @@ import { useEffect } from 'react';
 export default function OnboardingLayout() {
   const { isOnboarded } = useOnBoarded();
   useEffect(()=>{
-    if (isOnboarded === true) {
-      router.replace('/(tabs)/home-screen')
-    }
+    // if (isOnboarded === true) {
+    //   router.replace('/(tabs)/home-screen')
+    // }
   },[isOnboarded])
   return (
     <Stack>

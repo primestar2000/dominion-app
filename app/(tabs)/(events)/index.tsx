@@ -11,32 +11,26 @@ import {
   Dimensions,
   FlatList
 } from 'react-native';
-import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
+import { Ionicons, FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import FloatableButton from '@/components/FloatableButton';
+import { useRouter } from 'expo-router';
+import { EventCategory, EventItem } from '@/utils/event-types';
+import renderEventCard from '@/components/features/events/event-card2';
 
 // Get device dimensions for responsive design
 const { width } = Dimensions.get('window');
 
 // Types
-type EventCategory = 'all' | 'worship' | 'youth' | 'community' | 'bible';
 
-type EventItem = {
-  id: string;
-  title: string;
-  date: string;
-  time: string;
-  location: string;
-  description: string;
-  category: EventCategory;
-  image: any;
-  isFeatured?: boolean;
-};
+
+
 
 const ChurchEventsScreen: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<EventCategory>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
-
+  const router = useRouter();
   // Mock event data
   const [events] = useState<EventItem[]>([
     {
@@ -47,7 +41,7 @@ const ChurchEventsScreen: React.FC = () => {
       location: 'Main Sanctuary',
       description: 'Join us for our weekly worship service with Pastor Michael Johnson. This week\'s sermon is "Finding Peace in Troubled Times".',
       category: 'worship',
-      image: require('../../assets/images/1.jpg'),
+      image: require('../../../assets/images/1.jpg'),
       isFeatured: true,
     },
     {
@@ -58,7 +52,7 @@ const ChurchEventsScreen: React.FC = () => {
       location: 'Youth Center',
       description: 'All teens are welcome to join our midweek youth group for games, worship, and Bible discussion.',
       category: 'youth',
-      image: require('../../assets/images/2.jpg'),
+      image: require('../../../assets/images/2.jpg'),
     },
     {
       id: '3',
@@ -68,7 +62,7 @@ const ChurchEventsScreen: React.FC = () => {
       location: 'Fellowship Hall',
       description: 'An in-depth study of the Book of Romans led by Elder Sarah Williams. Open to all knowledge levels.',
       category: 'bible',
-      image: require('../../assets/images/2.jpg'),
+      image: require('../../../assets/images/2.jpg'),
     },
     {
       id: '4',
@@ -78,7 +72,7 @@ const ChurchEventsScreen: React.FC = () => {
       location: 'Church Parking Lot',
       description: 'Help us collect non-perishable food items for the local food bank. Volunteers needed!',
       category: 'community',
-      image: require('../../assets/images/3.jpg'),
+      image: require('../../../assets/images/3.jpg'),
       isFeatured: true,
     },
     {
@@ -89,7 +83,7 @@ const ChurchEventsScreen: React.FC = () => {
       location: 'Church Cafeteria',
       description: 'Start your week with fellowship and prayer. Breakfast will be served. All are welcome.',
       category: 'worship',
-      image: require('../../assets/images/1.jpg'),
+      image: require('../../../assets/images/1.jpg'),
     },
     {
       id: '6',
@@ -99,7 +93,7 @@ const ChurchEventsScreen: React.FC = () => {
       location: 'Children\'s Wing',
       description: 'Training session for all current and new children\'s ministry volunteers.',
       category: 'community',
-      image: require('../../assets/images/1.jpg'),
+      image: require('../../../assets/images/1.jpg'),
     },
     {
       id: '7',
@@ -109,7 +103,7 @@ const ChurchEventsScreen: React.FC = () => {
       location: 'Coffee Shop Area',
       description: 'Bible study and discussion focused on applying faith in everyday life for adults 18-30.',
       category: 'bible',
-      image: require('../../assets/images/1.jpg'),
+      image: require('../../../assets/images/1.jpg'),
     },
     {
       id: '8',
@@ -119,7 +113,7 @@ const ChurchEventsScreen: React.FC = () => {
       location: 'Main Sanctuary',
       description: 'Midweek worship service with contemporary music and a message from Pastor David.',
       category: 'worship',
-      image: require('../../assets/images/1.jpg'),
+      image: require('../../../assets/images/1.jpg'),
     },
   ]);
 
@@ -144,48 +138,7 @@ const ChurchEventsScreen: React.FC = () => {
   ];
 
   // Render event card
-  const renderEventCard = ({ item }: { item: EventItem }) => (
-    <TouchableOpacity style={styles.eventCard}>
-      <Image source={item.image} style={styles.eventImage} />
-      <View style={styles.eventContent}>
-        <View style={styles.eventHeader}>
-          <Text style={styles.eventTitle}>{item.title}</Text>
-          <TouchableOpacity style={styles.saveButton}>
-            <Ionicons name="bookmark-outline" size={22} color="#6A0572" />
-          </TouchableOpacity>
-        </View>
-        
-        <View style={styles.eventMetaContainer}>
-          <View style={styles.eventMeta}>
-            <Ionicons name="calendar-outline" size={16} color="#6A0572" />
-            <Text style={styles.eventMetaText}>{item.date}</Text>
-          </View>
-          <View style={styles.eventMeta}>
-            <Ionicons name="time-outline" size={16} color="#6A0572" />
-            <Text style={styles.eventMetaText}>{item.time}</Text>
-          </View>
-          <View style={styles.eventMeta}>
-            <Ionicons name="location-outline" size={16} color="#6A0572" />
-            <Text style={styles.eventMetaText}>{item.location}</Text>
-          </View>
-        </View>
-        
-        <Text style={styles.eventDescription} numberOfLines={2}>
-          {item.description}
-        </Text>
-        
-        <View style={styles.eventCardFooter}>
-          <TouchableOpacity style={styles.registerButton}>
-            <Text style={styles.registerButtonText}>Register</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.moreInfoButton}>
-            <Text style={styles.moreInfoButtonText}>Details</Text>
-            <Ionicons name="chevron-forward" size={16} color="#6A0572" />
-          </TouchableOpacity>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
+  
 
   return (
     <SafeAreaView style={styles.container}>
@@ -193,19 +146,12 @@ const ChurchEventsScreen: React.FC = () => {
       
       {/* Header */}
       <LinearGradient
-        colors={['#6A0572', '#AB83A1']}
+        colors={['blue', 'skyblue']}
         start={[0, 0]}
         end={[1, 1]}
         style={styles.header}
       >
         <View style={styles.headerContent}>
-          <View style={styles.titleContainer}>
-            <TouchableOpacity style={styles.backButton}>
-              <Ionicons name="arrow-back" size={24} color="white" />
-            </TouchableOpacity>
-            <Text style={styles.screenTitle}>Events</Text>
-          </View>
-          
           <View style={styles.searchContainer}>
             <Ionicons name="search-outline" size={20} color="#6A0572" style={styles.searchIcon} />
             <TextInput
@@ -313,26 +259,12 @@ const ChurchEventsScreen: React.FC = () => {
           )}
         </View>
       </ScrollView>
+        <FloatableButton
+        icon={<MaterialIcons name='add' size={30} color={"blue"} />}
+        onPress={() => {router.navigate('/(tabs)/(events)/create')}}
+    
+        />
       
-      {/* Bottom navigation */}
-      <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navItem}>
-          <Ionicons name="home-outline" size={24} color="#888" />
-          <Text style={styles.navText}>Home</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Ionicons name="calendar" size={24} color="#6A0572" />
-          <Text style={[styles.navText, styles.activeNavText]}>Events</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Ionicons name="book-outline" size={24} color="#888" />
-          <Text style={styles.navText}>Bible</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Ionicons name="people-outline" size={24} color="#888" />
-          <Text style={styles.navText}>Groups</Text>
-        </TouchableOpacity>
-      </View>
     </SafeAreaView>
   );
 };
@@ -350,19 +282,6 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     paddingHorizontal: 20,
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-  backButton: {
-    marginRight: 10,
-  },
-  screenTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
   },
   searchContainer: {
     flexDirection: 'row',
@@ -497,86 +416,8 @@ const styles = StyleSheet.create({
   eventsList: {
     paddingBottom: 20,
   },
-  eventCard: {
-    backgroundColor: 'white',
-    borderRadius: 15,
-    marginBottom: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    overflow: 'hidden',
-  },
-  eventImage: {
-    width: '100%',
-    height: 150,
-    resizeMode: 'cover',
-  },
-  eventContent: {
-    padding: 15,
-  },
-  eventHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 10,
-  },
-  eventTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    flex: 1,
-    marginRight: 10,
-  },
-  saveButton: {
-    padding: 5,
-  },
-  eventMetaContainer: {
-    marginBottom: 10,
-  },
-  eventMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 5,
-  },
-  eventMetaText: {
-    marginLeft: 8,
-    fontSize: 14,
-    color: '#666',
-  },
-  eventDescription: {
-    fontSize: 14,
-    color: '#666',
-    lineHeight: 20,
-    marginBottom: 10,
-  },
-  eventCardFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 5,
-  },
-  registerButton: {
-    backgroundColor: '#6A0572',
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 20,
-  },
-  registerButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
-  moreInfoButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  moreInfoButtonText: {
-    color: '#6A0572',
-    fontWeight: '500',
-    marginRight: 5,
-  },
+ 
+ 
   noEventsContainer: {
     alignItems: 'center',
     justifyContent: 'center',

@@ -7,7 +7,8 @@
       "@/*": [
         "./*"
       ],
-      "@/icons/*": ["assets/icons/*"]
+      "@/icons/*": ["assets/icons/*"],
+      "@/components": ["components/*"]
     }
   },
   "include": [
