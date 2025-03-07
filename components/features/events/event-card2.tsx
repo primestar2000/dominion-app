@@ -1,5 +1,6 @@
 import { EventItem } from "@/utils/event-types";
 import { Ionicons } from "@expo/vector-icons";
+import { Link } from "expo-router";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const renderEventCard = ({ item }: { item: EventItem }) => (
@@ -36,10 +37,15 @@ const renderEventCard = ({ item }: { item: EventItem }) => (
           <TouchableOpacity style={styles.registerButton}>
             <Text style={styles.registerButtonText}>Register</Text>
           </TouchableOpacity>
+          <Link href={{
+            pathname: '/(tabs)/(events)/[event]',
+            params: {event: item.id}
+          }} asChild>
           <TouchableOpacity style={styles.moreInfoButton}>
             <Text style={styles.moreInfoButtonText}>Details</Text>
             <Ionicons name="chevron-forward" size={16} color="#6A0572" />
           </TouchableOpacity>
+          </Link>
         </View>
       </View>
     </TouchableOpacity>

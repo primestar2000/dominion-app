@@ -18,6 +18,7 @@ import FloatableButton from '@/components/FloatableButton';
 import { useRouter } from 'expo-router';
 import { EventCategory, EventItem } from '@/utils/event-types';
 import renderEventCard from '@/components/features/events/event-card2';
+import { eventsDataTest } from '@/utils/data';
 
 // Get device dimensions for responsive design
 const { width } = Dimensions.get('window');
@@ -32,90 +33,7 @@ const ChurchEventsScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const router = useRouter();
   // Mock event data
-  const [events] = useState<EventItem[]>([
-    {
-      id: '1',
-      title: 'Sunday Worship Service',
-      date: 'Mar 3, 2025',
-      time: '10:00 AM - 12:00 PM',
-      location: 'Main Sanctuary',
-      description: 'Join us for our weekly worship service with Pastor Michael Johnson. This week\'s sermon is "Finding Peace in Troubled Times".',
-      category: 'worship',
-      image: require('../../../assets/images/1.jpg'),
-      isFeatured: true,
-    },
-    {
-      id: '2',
-      title: 'Youth Group Meeting',
-      date: 'Mar 5, 2025',
-      time: '6:30 PM - 8:00 PM',
-      location: 'Youth Center',
-      description: 'All teens are welcome to join our midweek youth group for games, worship, and Bible discussion.',
-      category: 'youth',
-      image: require('../../../assets/images/2.jpg'),
-    },
-    {
-      id: '3',
-      title: 'Bible Study: Book of Romans',
-      date: 'Mar 7, 2025',
-      time: '7:00 PM - 8:30 PM',
-      location: 'Fellowship Hall',
-      description: 'An in-depth study of the Book of Romans led by Elder Sarah Williams. Open to all knowledge levels.',
-      category: 'bible',
-      image: require('../../../assets/images/2.jpg'),
-    },
-    {
-      id: '4',
-      title: 'Community Outreach: Food Drive',
-      date: 'Mar 8, 2025',
-      time: '9:00 AM - 1:00 PM',
-      location: 'Church Parking Lot',
-      description: 'Help us collect non-perishable food items for the local food bank. Volunteers needed!',
-      category: 'community',
-      image: require('../../../assets/images/3.jpg'),
-      isFeatured: true,
-    },
-    {
-      id: '5',
-      title: 'Prayer Breakfast',
-      date: 'Mar 10, 2025',
-      time: '7:30 AM - 9:00 AM',
-      location: 'Church Cafeteria',
-      description: 'Start your week with fellowship and prayer. Breakfast will be served. All are welcome.',
-      category: 'worship',
-      image: require('../../../assets/images/1.jpg'),
-    },
-    {
-      id: '6',
-      title: 'Children\'s Ministry Volunteer Meeting',
-      date: 'Mar 11, 2025',
-      time: '6:00 PM - 7:00 PM',
-      location: 'Children\'s Wing',
-      description: 'Training session for all current and new children\'s ministry volunteers.',
-      category: 'community',
-      image: require('../../../assets/images/1.jpg'),
-    },
-    {
-      id: '7',
-      title: 'Young Adults Bible Study',
-      date: 'Mar 12, 2025',
-      time: '7:00 PM - 9:00 PM',
-      location: 'Coffee Shop Area',
-      description: 'Bible study and discussion focused on applying faith in everyday life for adults 18-30.',
-      category: 'bible',
-      image: require('../../../assets/images/1.jpg'),
-    },
-    {
-      id: '8',
-      title: 'Wednesday Night Worship',
-      date: 'Mar 12, 2025',
-      time: '7:00 PM - 8:30 PM',
-      location: 'Main Sanctuary',
-      description: 'Midweek worship service with contemporary music and a message from Pastor David.',
-      category: 'worship',
-      image: require('../../../assets/images/1.jpg'),
-    },
-  ]);
+  const [events] = useState<EventItem[]>(eventsDataTest);
 
   // Filter events based on selected category and search query
   const filteredEvents = events.filter(event => {

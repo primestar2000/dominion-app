@@ -44,7 +44,7 @@ const ListStudy = () => {
     <View style={styles.container}>
       <FloatableButton
         icon={<MaterialIcons name='add' size={30} color={"blue"} />}
-        onPress={() => {router.navigate('./(tabs)/(study)/createStudy')}}
+        onPress={() => {router.push({pathname: "/(tabs)/(study)/createStudy"})}}
     
         />
 

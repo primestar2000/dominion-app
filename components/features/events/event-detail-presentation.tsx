@@ -15,9 +15,9 @@ type EventItem = {
     image: any;
     isFeatured?: boolean;
   };
-const EventCard = ({item}:{item:EventItem}) => {
+const EventDetailPresentation = ({item}:{item:EventItem}) => {
     return(
-        <TouchableOpacity style={styles.eventCard}>
+    <View style={styles.eventCard}>
       <Image source={item.image} style={styles.eventImage} />
       <View style={styles.eventContent}>
         <View style={styles.eventHeader}>
@@ -40,41 +40,34 @@ const EventCard = ({item}:{item:EventItem}) => {
             <Ionicons name="location-outline" size={16} color="#6A0572" />
             <Text style={styles.eventMetaText}>{item.location}</Text>
           </View>
+          <Text style={styles.descriptionTitle}>Description</Text>
+            <Text style={styles.eventDescription} >
+            {item.description}
+            </Text>
         </View>
         
-        <Text style={styles.eventDescription} numberOfLines={2}>
-          {item.description}
-        </Text>
         
         <View style={styles.eventCardFooter}>
           <TouchableOpacity style={styles.registerButton}>
             <Text style={styles.registerButtonText}>Register</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.moreInfoButton}>
-            <Text style={styles.moreInfoButtonText}>Details</Text>
-            <Ionicons name="chevron-forward" size={16} color="#6A0572" />
-          </TouchableOpacity>
+          
         </View>
       </View>
-    </TouchableOpacity>
+    </View>
     )
 }
 
 const styles = StyleSheet.create({
     eventCard: {
         backgroundColor: 'white',
-        borderRadius: 15,
-        marginBottom: 15,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
+ 
         overflow: 'hidden',
+        flex:1
       },
       eventImage: {
         width: '100%',
-        height: 150,
+        height: 250,
         resizeMode: 'cover',
       },
       eventContent: {
@@ -109,6 +102,11 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#666',
       },
+      descriptionTitle: {
+        textAlign: 'center',
+        fontSize: 20,
+        marginTop: 20
+      },
       eventDescription: {
         fontSize: 14,
         color: '#666',
@@ -117,30 +115,25 @@ const styles = StyleSheet.create({
       },
       eventCardFooter: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         alignItems: 'center',
         marginTop: 5,
+
       },
       registerButton: {
         backgroundColor: '#6A0572',
         paddingVertical: 8,
         paddingHorizontal: 15,
         borderRadius: 20,
+        width: '100%',
       },
       registerButtonText: {
         color: 'white',
         fontWeight: 'bold',
         fontSize: 14,
+        textAlign: 'center'
       },
-      moreInfoButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-      },
-      moreInfoButtonText: {
-        color: '#6A0572',
-        fontWeight: '500',
-        marginRight: 5,
-      },
+
 })
 
-export default EventCard
+export default EventDetailPresentation

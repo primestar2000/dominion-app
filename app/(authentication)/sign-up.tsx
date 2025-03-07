@@ -1,4 +1,4 @@
-import { Image, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import InputField from '@/components/inputField';
 import { Link } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -78,11 +78,10 @@ const SignUp = () => {
             email: email,
             password: password,
           })
-        if (error) {
-            console.log('error',error)
-            return ;
-        }
-        console.log(session);
+      
+          if (error) Alert.alert(error.message)
+          if (!session) Alert.alert('Please check your inbox for email verification!')
+          setLoading(false)
         const {error:profileError} = await supabase.from('user_profile').upsert({
             user_id: session?.user.id,
             username: name,

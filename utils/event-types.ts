@@ -4,9 +4,9 @@ export type EventItem = {
   title: string;
   date: string;
   time: string;
-  location: string;
-  description: string;
-  category: EventCategory;
-  image: any;
+  location?: string;
+  description?: string;
+  category?: EventCategory;
+  image?: any;
   isFeatured?: boolean;
 };

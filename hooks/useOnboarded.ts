@@ -16,7 +16,7 @@ const useOnBoarded = () => {
     };
 
     getOnBoardingStatus();
-  }, []);
+  }, [isOnboarded]);
 
   useEffect(()=>{
     console.log(`onboarding status`, isOnboarded);
