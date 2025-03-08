@@ -179,7 +179,7 @@ export default function MediaScreen() {
         </View>
         
       </View>
-      
+    
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />

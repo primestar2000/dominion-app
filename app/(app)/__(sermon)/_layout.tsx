@@ -8,7 +8,7 @@ const sermonLayout = () => {
       headerShown: false
     }}>
         <Stack.Screen name='index' options={{title: 'Bible Study'}} />
-        <Stack.Screen name='[study]' options={{title: 'Bible Study'}} />
+        {/* <Stack.Screen name='[study]' options={{title: 'Bible Study'}} /> */}
     </Stack>
   )
 }

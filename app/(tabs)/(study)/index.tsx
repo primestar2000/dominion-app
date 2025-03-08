@@ -4,8 +4,9 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import StudyComponent from '@/components/studyComponent';
 import FloatableButton from '@/components/FloatableButton';
 import Tags from '@/components/Tags';
-import { studyData, studyDataProp } from '@/utils/data';
+import { studyData2, studyDataProp } from '@/utils/data';
 import { Link, useRouter} from 'expo-router';
+import { StudyType } from '@/utils/study-types';
 
 const categoriesData = [
     { title: "All", active: true },
@@ -15,7 +16,7 @@ const categoriesData = [
 
 const ListStudy = () => {
   const router = useRouter();
-  const [studies, setStudies] = useState(studyData);
+  const [studies, setStudies] = useState(studyData2);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   // const fetchStudies = async () => {
@@ -38,7 +39,7 @@ const ListStudy = () => {
   // }, []);
 
   // const renderCategory = ({ item }) => <Tags data={item} />;
-  const renderStudyComponent = ({ item }:{item:studyDataProp}) => <StudyComponent data={item} />;
+  const renderStudyComponent = ({ item }:{item:StudyType}) => <StudyComponent data={item} />;
 
   return (
     <View style={styles.container}>

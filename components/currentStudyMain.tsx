@@ -2,26 +2,24 @@ import { StyleSheet, Text, View } from 'react-native'
 import React, { useEffect } from 'react'
 import StudyWeek from './StudyWeek'
 import DefaultButton from './DefaultButton'
-import { studyDataProp } from '@/utils/data'
+import { StudyType } from '@/utils/study-types'
+import { useRouter } from 'expo-router'
 
-const CurrentStudyMain = ({docData}:{docData:studyDataProp}) => {
-    // useEffect(()=>{
-
-    //     console.log(docData)
-    // })
+const CurrentStudyMain = ({docData}:{docData:StudyType}) => {
+    const router = useRouter();
   return (
     <View style={styles.frame}>
         <View style={styles.headSection}>
             <Text style={styles.headTitle}>{docData.title}</Text>
-            <Text style={styles.headText}>{docData.bibleText}</Text>
+            <Text style={styles.headText}>{docData?.text[0]?.scripture}</Text>
             {/* <DefaultButton onPress={()=>{navigation.navigate('CreateWeek', {docData})}} title={'Add Week'} /> */}
-            <DefaultButton  title={'Add Week'} />
+            <DefaultButton onPress={()=>{router.push({pathname: "/(tabs)/(study)/(week)/create"})}} title={'Add Week'} />
         </View>
         <Text style={styles.avaliableText}>Available Weeks</Text>
         <View style={styles.weeksSection}>
             {
                 docData.weeks.map((data, index)=>(
-                    <StudyWeek key={index} data={data} />
+                    <StudyWeek key={index} data={{...data, studyId: docData.id, index}}  />
                 ))
             }
         </View>

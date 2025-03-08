@@ -121,7 +121,7 @@ const todayDevotional: DevotionalItem = {
 export default function HomeScreen() {
   // Render upcoming event item
   const renderEventItem = ({ item }: { item: Event }) => (
-    <Link href={`/events/${item.id}`} asChild>
+    <Link href={{pathname: '/(tabs)/(events)/[event]', params: {event: item.id}}} asChild>
       <TouchableOpacity style={styles.eventCard}>
         <Image source={{ uri: item.image }} style={styles.eventImage} />
         <View style={styles.eventOverlay}>
@@ -179,9 +179,11 @@ export default function HomeScreen() {
           <Text style={styles.welcomeText}>Welcome to</Text>
           <Text style={styles.churchName}>Dominion Chapel</Text>
         </View>
+        <Link href={{pathname: "/(app)/profile-screen"}} asChild>
         <TouchableOpacity style={styles.profileButton}>
           <Ionicons name="person-circle-outline" size={30} color="#3D5AF1" />
         </TouchableOpacity>
+        </Link>
       </View>
       
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -212,7 +214,7 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </Link>
           
-          <Link href="/prayer" asChild>
+          <Link href={{pathname: "/(app)/prayer-request"}} asChild>
             <TouchableOpacity style={styles.actionButton}>
               <View style={[styles.actionIcon, { backgroundColor: 'rgba(255, 149, 0, 0.1)' }]}>
                 <Ionicons name="chatbubbles-outline" size={24} color="#FF9500" />
@@ -244,7 +246,7 @@ export default function HomeScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Upcoming Events</Text>
-            <Link href="/events" asChild>
+            <Link href={{pathname: "/(tabs)/(events)"}} asChild>
               <TouchableOpacity>
                 <Text style={styles.viewAllText}>View All</Text>
               </TouchableOpacity>
@@ -265,7 +267,7 @@ export default function HomeScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Announcements</Text>
-            <Link href="/announcements" asChild>
+            <Link href={{pathname: "/(tabs)/(home)/(announcements)"}} asChild>
               <TouchableOpacity>
                 <Text style={styles.viewAllText}>View All</Text>
               </TouchableOpacity>

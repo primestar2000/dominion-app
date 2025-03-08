@@ -4,20 +4,18 @@ import Entypo from '@expo/vector-icons/Entypo';
 import { studyDataProp } from '@/utils/data';
 import { TouchableOpacity } from 'react-native';
 import { Link } from 'expo-router';
+import { StudyType } from '@/utils/study-types';
 
-const StudyComponent = ({ data }: { data: studyDataProp }) => {
+const StudyComponent = ({ data }: { data: StudyType }) => {
     
-    useEffect(()=>{
-        console.log(data);
-    })
   return (
     <Link href={{
         pathname: '/(tabs)/(study)/[study]',
-        params: {study: JSON.stringify(data)}
+        params: {study: data.id}
     }} asChild>
     <TouchableOpacity style={styles.frame}>
       <Text style={styles.title}>{data.title}</Text>
-      <Text style={styles.content}>{data.bibleText}</Text>
+      <Text style={styles.content}>{data.text[0].scripture}</Text>
       <View style={styles.bottomCont}>
         <View style={styles.bottomLeftCont}>
           <Entypo name='calendar' color={'#007BFF'} size={20} />

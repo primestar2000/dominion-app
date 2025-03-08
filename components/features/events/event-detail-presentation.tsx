@@ -18,7 +18,7 @@ type EventItem = {
 const EventDetailPresentation = ({item}:{item:EventItem}) => {
     return(
     <View style={styles.eventCard}>
-      <Image source={item.image} style={styles.eventImage} />
+      <Image source={{uri:item.image}} style={styles.eventImage} />
       <View style={styles.eventContent}>
         <View style={styles.eventHeader}>
           <Text style={styles.eventTitle}>{item.title}</Text>

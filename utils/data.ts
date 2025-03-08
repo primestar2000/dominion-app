@@ -1,5 +1,6 @@
 import { EventItem } from "./event-types";
 import { AnnouncementType } from "./announcement-type";
+import { StudyType } from "./study-types";
 
 export type weekProp = {
     
@@ -16,49 +17,49 @@ export type studyDataProp = {
     weeks: weekProp[],
     year: "2025"
 }
-export const studyData:studyDataProp[] = [
-    {
-        id: '1',
-        bibleText:"2 Cor. 5:7: For we walk by faith, not by sight.(NKJV) ",
-        content:"Welcome into September, the ninth month of our year of “This Same Jesus!” This month carries deep Biblical significance, often symbolizing the period of birthing, completion, and fulfillment of God's promises. We know that the World today is filled with uncertainties and challenges. These come in many forms—economic instability, health crises, personal loss, social and political unrest, or even the unpredictability of natural disasters. It is essential to recognize that while we cannot control everything that happens around us, we can choose how we respond; and certainly, that must be by faith! Friend, through faith and personal resilience, we can navigate through these difficult times. Just as a child is born in the ninth month, this is a time for us to see the fruits and manifestations of our faith as we trust in God's timing and purpose. Halleluja!",
-        month:"September",
-        title:"Believe System",
-        weeks: [
-            {
-                introduction: 'sample 1',
-                title: 'this is a title',
-                points: [
-                    'point 1', 'point 2', 'point 3'
-                ]
-            }
-        ],
-        year: "2025"
-    },
-    {
-        id: '2',
-        bibleText:"2 Cor. 5:7: For we walk by faith, not by sight.(NKJV) ",
-        content:"Welcome into September, the ninth month of our year of “This Same Jesus!” This month carries deep Biblical significance, often symbolizing the period of birthing, completion, and fulfillment of God's promises. We know that the World today is filled with uncertainties and challenges. These come in many forms—economic instability, health crises, personal loss, social and political unrest, or even the unpredictability of natural disasters. It is essential to recognize that while we cannot control everything that happens around us, we can choose how we respond; and certainly, that must be by faith! Friend, through faith and personal resilience, we can navigate through these difficult times. Just as a child is born in the ninth month, this is a time for us to see the fruits and manifestations of our faith as we trust in God's timing and purpose. Halleluja!",
-        month:"August",
-        title:"WALKING BY FAITH",
-        weeks: [
-            {
-                introduction: 'sample 1',
-                title: 'this is a title',
-                points: [
-                    'point 1', 'point 2', 'point 3'
-                ]
-            },
-            {
-                introduction: 'this is a little introduction just to get some place holders and to make the view look populated',
-                title: 'this is a title',
-                points: [
-                    'point 1', 'point 2', 'point 3'
-                ]
-            },
-        ],
-        year: "2025"
-    }
-]
+// export const studyData:studyDataProp[] = [
+//     {
+//         id: '1',
+//         bibleText:"2 Cor. 5:7: For we walk by faith, not by sight.(NKJV) ",
+//         content:"Welcome into September, the ninth month of our year of “This Same Jesus!” This month carries deep Biblical significance, often symbolizing the period of birthing, completion, and fulfillment of God's promises. We know that the World today is filled with uncertainties and challenges. These come in many forms—economic instability, health crises, personal loss, social and political unrest, or even the unpredictability of natural disasters. It is essential to recognize that while we cannot control everything that happens around us, we can choose how we respond; and certainly, that must be by faith! Friend, through faith and personal resilience, we can navigate through these difficult times. Just as a child is born in the ninth month, this is a time for us to see the fruits and manifestations of our faith as we trust in God's timing and purpose. Halleluja!",
+//         month:"September",
+//         title:"Believe System",
+//         weeks: [
+//             {
+//                 introduction: 'sample 1',
+//                 title: 'this is a title',
+//                 points: [
+//                     'point 1', 'point 2', 'point 3'
+//                 ]
+//             }
+//         ],
+//         year: "2025"
+//     },
+//     {
+//         id: '2',
+//         bibleText:"2 Cor. 5:7: For we walk by faith, not by sight.(NKJV) ",
+//         content:"Welcome into September, the ninth month of our year of “This Same Jesus!” This month carries deep Biblical significance, often symbolizing the period of birthing, completion, and fulfillment of God's promises. We know that the World today is filled with uncertainties and challenges. These come in many forms—economic instability, health crises, personal loss, social and political unrest, or even the unpredictability of natural disasters. It is essential to recognize that while we cannot control everything that happens around us, we can choose how we respond; and certainly, that must be by faith! Friend, through faith and personal resilience, we can navigate through these difficult times. Just as a child is born in the ninth month, this is a time for us to see the fruits and manifestations of our faith as we trust in God's timing and purpose. Halleluja!",
+//         month:"August",
+//         title:"WALKING BY FAITH",
+//         weeks: [
+//             {
+//                 introduction: 'sample 1',
+//                 title: 'this is a title',
+//                 points: [
+//                     'point 1', 'point 2', 'point 3'
+//                 ]
+//             },
+//             {
+//                 introduction: 'this is a little introduction just to get some place holders and to make the view look populated',
+//                 title: 'this is a title',
+//                 points: [
+//                     'point 1', 'point 2', 'point 3'
+//                 ]
+//             },
+//         ],
+//         year: "2025"
+//     }
+// ]
 
 
 export const eventsDataTest:EventItem [] = [
@@ -218,4 +219,133 @@ export const announcementDataFAke:AnnouncementType[] = [
 //     category: 'Community',
 //     eventDate: '2025-04-19T12:00:00Z',
 //   }
+]
+
+interface study  {
+  title: string,
+  text: [
+    {
+      scripture: string;
+      content: string;
+    }
+  ],
+  introduction: string;
+  weeks: [
+    {
+      title: string;
+      task?: string;
+      main_points: [
+        {
+          title: string;
+          text?: string;
+          points?: [
+            {
+              title?: string;
+              text?: string;
+              sub_points?: string []
+            }
+          ] 
+        }
+      ]
+
+    }
+  ]
+
+}
+
+export const studyData2: StudyType[] = [
+  {
+    id: "1",
+    title: "Faith in Action: The Book of James",
+    month: 'january',
+    text: [
+      {
+        scripture: "James 1:2-4",
+        content: "Consider it pure joy, my brothers and sisters, whenever you face trials of many kinds, because you know that the testing of your faith produces perseverance. Let perseverance finish its work so that you may be mature and complete, not lacking anything."
+      },
+      {
+        scripture: "James 1:22",
+        content: "Do not merely listen to the word, and so deceive yourselves. Do what it says."
+      }
+    ],
+    introduction: "James, a servant of God and of the Lord Jesus Christ, writes to the twelve tribes scattered among the nations. This practical book focuses on living out our faith through actions and addresses how authentic faith behaves in daily life.",
+    weeks: [
+      {
+        id: "1",
+        title: "Week 1: Faith and Trials",
+        task: "Read James chapter 1 and reflect on how trials shape our faith.",
+        main_points: [
+          {
+            title: "Finding Joy in Trials",
+            text: "James calls us to consider trials as opportunities for joy and growth.",
+            points: [
+              {
+                title: "The Purpose of Trials",
+                text: "Trials test our faith and develop perseverance.",
+                sub_points: [
+                  "Trials reveal what we truly believe",
+                  "Trials strengthen our character",
+                  "Trials prepare us for greater service"
+                ]
+              },
+              {
+                title: "The Outcome of Perseverance",
+                text: "Maturity and completeness come through enduring challenges.",
+                sub_points: [
+                  "Spiritual maturity",
+                  "Emotional stability",
+                  "Deeper relationship with God"
+                ]
+              }
+            ]
+          },
+          {
+            title: "Wisdom for the Journey",
+            text: "God generously gives wisdom to those who ask in faith.",
+            points: [
+              {
+                title: "How to Ask for Wisdom",
+                text: "Ask with confidence and without doubting.",
+                sub_points: [
+                  "Believe that God wants to give wisdom",
+                  "Trust God's timing and methods",
+                  "Apply the wisdom you receive"
+                ]
+              }
+            ]
+          },
+          {
+            title: "Being Doers of the Word",
+            text: "James emphasizes the importance of not just hearing but doing.",
+            points: [
+              {
+                title: "The Danger of Self-Deception",
+                text: "Merely listening without acting is spiritual self-deception.",
+                sub_points: [
+                  "Knowledge without application is fruitless",
+                  "True blessing comes through action",
+                  "Our actions demonstrate what we truly believe"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "2",
+        title: "Week 2: Faith and Partiality",
+        task: "Read James chapter 2 and examine how favoritism contradicts the gospel.",
+        main_points: [
+          {
+            title: "Favoritism Forbidden",
+            text: "Showing partiality contradicts faith in Christ."
+          },
+          {
+            title: "The Royal Law of Love",
+            text: "Loving your neighbor fulfills God's law."
+          }
+        ]
+      }
+    ]
+  }
 ]

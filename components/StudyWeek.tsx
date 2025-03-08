@@ -2,20 +2,27 @@ import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { Pressable } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons';
-import { weekProp } from '@/utils/data';
-const StudyWeek = ({data}:{data:weekProp}) => {
+import { Link } from 'expo-router';
+import { WeekType } from '@/utils/study-types';
+interface studyWeekType extends WeekType  {
+    studyId: string;
+    index: number;
+}
+const StudyWeek = ({data}:{data:studyWeekType}) => {
   return (
     <View style={styles.frame}>
       <Text style={styles.title}>{data.title}</Text>
         <View style={styles.innerCont}>
             <View style={styles.mainContentSection}>
-                <Text >{data.introduction}</Text>
-                <Text style={{color: "#2b7cda", fontWeight: '600'}}>{data.points.length + ' points'}</Text>
+                <Text >{data.task}</Text>
+                <Text style={{color: "#2b7cda", fontWeight: '600'}}>{data.main_points.length + ' points'}</Text>
             </View>
+            <Link href={{pathname: "/(tabs)/(study)/(week)/[week]", params: {week: data.id, studyId: data.studyId, index: data.index}}} asChild>
             <Pressable style={styles.startButton}>
                 <Text style={styles.startText}>Start</Text>
                 <MaterialIcons name='chevron-right' size={24} color={"#2b7cda"} />
             </Pressable>
+            </Link>
         </View>
 
     </View>

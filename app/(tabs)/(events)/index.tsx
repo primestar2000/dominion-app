@@ -101,7 +101,7 @@ const ChurchEventsScreen: React.FC = () => {
             >
               {featuredEvents.map(event => (
                 <TouchableOpacity key={event.id} style={styles.featuredEventCard}>
-                  <Image source={event.image} style={styles.featuredEventImage} />
+                  <Image source={{uri:event.image}} style={styles.featuredEventImage} />
                   <LinearGradient
                     colors={['transparent', 'rgba(0,0,0,0.8)']}
                     style={styles.featuredEventGradient}

@@ -5,7 +5,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const renderEventCard = ({ item }: { item: EventItem }) => (
     <TouchableOpacity style={styles.eventCard}>
-      <Image source={item.image} style={styles.eventImage} />
+      <Image source={{uri:item.image}} style={styles.eventImage} />
       <View style={styles.eventContent}>
         <View style={styles.eventHeader}>
           <Text style={styles.eventTitle}>{item.title}</Text>
