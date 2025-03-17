@@ -15,29 +15,27 @@ const menuTab = () => {
       const router = useRouter();
       const {isAuthenticated} = useAuth()
       useEffect(()=>{
-        if (!isAuthenticated) {
-          router.replace('../(authentication)')
-        }
+
       },[isAuthenticated])
   return (
-    <Tabs initialRouteName={"(home)"} screenOptions={{
+    <Tabs initialRouteName={"(media)"} screenOptions={{
       tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
-        tabBarStyle: [Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-        {
-          height: 70,
-          paddingTop: 8,
-          paddingHorizontal: 10
-        }
-      ],
+      //   tabBarStyle: [Platform.select({
+      //     ios: {
+      //       // Use a transparent background on iOS to show the blur effect
+      //       position: 'absolute',
+      //     },
+      //     default: {},
+      //   }),
+      //   {
+      //     height: 70,
+      //     paddingTop: 8,
+      //     paddingHorizontal: 10
+      //   }
+      // ],
         
         }}>
         <Tabs.Screen name='(home)' 

@@ -4,12 +4,12 @@ import { createContext, useContext, ReactNode, useState, useEffect } from 'react
 
 // Define the shape of your auth context
 interface AuthContextType {
-  isAuthenticated: boolean;
-  user: User | null;
+  isAuthenticated: boolean | null;
+  user: User | null; 
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
-  isOnboarded: boolean;
+  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // Define user type
@@ -21,12 +21,12 @@ interface User {
 
 // Create the context with a default value
 const AuthContext = createContext<AuthContextType>({
-  isAuthenticated: false,
+  isAuthenticated: true,
   user: null,
   signIn: async () => {},
   signOut: async () => {},
   signUp: async () => {},
-  isOnboarded: false,
+  setIsAuthenticated: ()=>{},
 });
 
 // Define props for AuthProvider
@@ -36,18 +36,13 @@ interface AuthProviderProps {
 
 // Create the provider component
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-  // const [isOnboarded, setisOnboarded] = useState(false);
 
-  const {isOnboarded, setIsOnboarded} = useOnBoarded();
+
+ console.log('hello')
   useEffect(()=>{
-    console.log(isAuthenticated);
-    if (!isOnboarded) {
-      router.replace("/(onboarding)")
-    }else{
-      router.replace("/(authentication)/sign-in")
-    }
+    console.log('AuthStatus', isAuthenticated)
   },[isAuthenticated])
   const signIn = async (email: string, password: string) => {
     try {
@@ -85,11 +80,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
     signIn,
     signOut,
     signUp,
-    isOnboarded,
-    setIsOnboarded
+    setIsAuthenticated
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+  <AuthContext.Provider value={value}>
+    {children}
+  </AuthContext.Provider>
+
+  );
 }
 
 // Create a custom hook to use the auth context

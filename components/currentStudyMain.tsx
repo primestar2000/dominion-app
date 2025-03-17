@@ -4,16 +4,19 @@ import StudyWeek from './StudyWeek'
 import DefaultButton from './DefaultButton'
 import { StudyType } from '@/utils/study-types'
 import { useRouter } from 'expo-router'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { StudyNavigatorParamList } from '@/src/navigations/study-navigation'
 
 const CurrentStudyMain = ({docData}:{docData:StudyType}) => {
-    const router = useRouter();
+    const {navigate} = useNavigation<NavigationProp<StudyNavigatorParamList>>();
+    // const router = useRouter();
   return (
     <View style={styles.frame}>
         <View style={styles.headSection}>
             <Text style={styles.headTitle}>{docData.title}</Text>
             <Text style={styles.headText}>{docData?.text[0]?.scripture}</Text>
             {/* <DefaultButton onPress={()=>{navigation.navigate('CreateWeek', {docData})}} title={'Add Week'} /> */}
-            <DefaultButton onPress={()=>{router.push({pathname: "/(tabs)/(study)/(week)/create"})}} title={'Add Week'} />
+            <DefaultButton onPress={()=>{navigate('createStudyWeek')}} title={'Add Week'} />
         </View>
         <Text style={styles.avaliableText}>Available Weeks</Text>
         <View style={styles.weeksSection}>

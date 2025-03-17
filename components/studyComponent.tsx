@@ -5,15 +5,17 @@ import { studyDataProp } from '@/utils/data';
 import { TouchableOpacity } from 'react-native';
 import { Link } from 'expo-router';
 import { StudyType } from '@/utils/study-types';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { StudyNavigatorParamList } from '@/src/navigations/study-navigation';
 
 const StudyComponent = ({ data }: { data: StudyType }) => {
-    
+    const {navigate} = useNavigation<NavigationProp<StudyNavigatorParamList>>();
   return (
-    <Link href={{
-        pathname: '/(tabs)/(study)/[study]',
-        params: {study: data.id}
-    }} asChild>
-    <TouchableOpacity style={styles.frame}>
+    // <Link href={{
+    //     pathname: '/(tabs)/(study)/[study]',
+    //     params: {study: data.id}
+    // }} asChild>
+    <TouchableOpacity onPress={()=>{navigate("currentStudy", {study: data.id})}} style={styles.frame}>
       <Text style={styles.title}>{data.title}</Text>
       <Text style={styles.content}>{data.text[0].scripture}</Text>
       <View style={styles.bottomCont}>
@@ -29,7 +31,7 @@ const StudyComponent = ({ data }: { data: StudyType }) => {
         </Pressable>
       </View>
     </TouchableOpacity>
-    </Link>
+    // </Link>
   );
 };
 

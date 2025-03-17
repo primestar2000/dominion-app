@@ -4,11 +4,14 @@ import { Pressable } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { WeekType } from '@/utils/study-types';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { StudyNavigatorParamList } from '@/src/navigations/study-navigation';
 interface studyWeekType extends WeekType  {
     studyId: string;
     index: number;
 }
 const StudyWeek = ({data}:{data:studyWeekType}) => {
+    const {navigate} = useNavigation<NavigationProp<StudyNavigatorParamList>>();
   return (
     <View style={styles.frame}>
       <Text style={styles.title}>{data.title}</Text>
@@ -17,12 +20,10 @@ const StudyWeek = ({data}:{data:studyWeekType}) => {
                 <Text >{data.task}</Text>
                 <Text style={{color: "#2b7cda", fontWeight: '600'}}>{data.main_points.length + ' points'}</Text>
             </View>
-            <Link href={{pathname: "/(tabs)/(study)/(week)/[week]", params: {week: data.id, studyId: data.studyId, index: data.index}}} asChild>
-            <Pressable style={styles.startButton}>
+            <Pressable onPress={()=>{navigate('studyWeekDetailScreen', {week: data.id, studyId: data.studyId, index: data.index})}} style={styles.startButton}>
                 <Text style={styles.startText}>Start</Text>
                 <MaterialIcons name='chevron-right' size={24} color={"#2b7cda"} />
             </Pressable>
-            </Link>
         </View>
 
     </View>

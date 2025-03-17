@@ -4,7 +4,7 @@
     "slug": "dominion-mobile-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/dcic-logo.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.pitechy.dominionmobileapp"
     },
     "web": {
       "bundler": "metro",
@@ -37,6 +38,14 @@
     "experiments": {
       "typedRoutes": true,
       "tsconfigPaths": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "3d9a0675-e069-407b-b4ad-8a97a1be90a1"
+      }
     }
   }
 }
