@@ -14,6 +14,9 @@ import { Link, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { HomeStackNavigatorParamList } from '@/src/navigations/home-stack-navigator';
+import { useAppDispatch } from '@/redux/hooks';
+import getUserProfileThunk from '@/redux/auth/user-profile-thunk';
+import { supabase } from '@/utils/lib/superbase';
 
 // Types
 interface Event {
@@ -123,10 +126,18 @@ const todayDevotional: DevotionalItem = {
 export default function HomeScreen() {
   const {navigate} = useNavigation<NavigationProp<HomeStackNavigatorParamList>>();
   const param = useLocalSearchParams()
+  const dispatch = useAppDispatch();
   // Render upcoming event item
   useEffect(()=>{
-    console.log(param)
+    fetchUserProfile();
   })
+
+  const fetchUserProfile = async () => {
+   const userId = (await supabase.auth.getUser()).data.user?.id;
+   if (userId) {
+     dispatch(getUserProfileThunk(userId))
+   }
+  }
   const renderEventItem = ({ item }: { item: Event }) => (
     <Link href={{pathname: '/(tabs)/(events)/[event]', params: {event: item.id}}} asChild>
       <TouchableOpacity style={styles.eventCard}>
@@ -197,8 +208,8 @@ export default function HomeScreen() {
       
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Daily Devotional */}
-        <Link href={`/devotionals/${todayDevotional.id}`} asChild>
-          <TouchableOpacity style={styles.devotionalCard}>
+        {/* <Link href={`/devotionals/${todayDevotional.id}`} asChild> */}
+          <TouchableOpacity onPress={()=>{navigate('devotionalScreen')}} style={styles.devotionalCard}>
             <Image source={{ uri: todayDevotional.image }} style={styles.devotionalImage} />
             <View style={styles.devotionalOverlay}>
               <View style={styles.devotionalBadge}>
@@ -210,21 +221,21 @@ export default function HomeScreen() {
               </View>
             </View>
           </TouchableOpacity>
-        </Link>
+        {/* </Link> */}
         
         {/* Quick Actions */}
         <View style={styles.quickActions}>
-          <Link href="/give" asChild>
+          {/* <Link href="/give" asChild> */}
             <TouchableOpacity style={styles.actionButton}>
               <View style={[styles.actionIcon, { backgroundColor: 'rgba(61, 90, 241, 0.1)' }]}>
-                <Ionicons name="heart-outline" size={24} color="#3D5AF1" />
+                <Ionicons name="heart" size={24} color="#3D5AF1" />
               </View>
-              <Text style={styles.actionText}>Give</Text>
+              <Text style={styles.actionText}>Testimony</Text>
             </TouchableOpacity>
-          </Link>
+          {/* </Link> */}
           
           {/* <Link href={{pathname: "/(app)/prayer-request"}} asChild> */}
-            <TouchableOpacity style={styles.actionButton}>
+            <TouchableOpacity onPress={()=>{navigate("prayerRequestScreen")}} style={styles.actionButton}> 
               <View style={[styles.actionIcon, { backgroundColor: 'rgba(255, 149, 0, 0.1)' }]}>
                 <Ionicons name="chatbubbles-outline" size={24} color="#FF9500" />
               </View>
@@ -233,11 +244,11 @@ export default function HomeScreen() {
           {/* </Link> */}
           
           {/* <Link href="/connect" asChild> */}
-            <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity onPress={()=>{navigate("annoucementsScreen")}} style={styles.actionButton}> 
               <View style={[styles.actionIcon, { backgroundColor: 'rgba(76, 217, 100, 0.1)' }]}>
-                <Ionicons name="people-outline" size={24} color="#4CD964" />
+                <Ionicons name="megaphone-outline" size={24} color="#4CD964" />
               </View>
-              <Text style={styles.actionText}>Connect</Text>
+              <Text style={styles.actionText}>Annoucements</Text>
             </TouchableOpacity>
           {/* </Link> */}
           

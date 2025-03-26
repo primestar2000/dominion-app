@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     frame: {
         width: "100%",
         paddingVertical: 10,
-        backgroundColor: "#2b7cda",
+        backgroundColor: '#3D5AF1',
         borderRadius: 10,
         justifyContent: "center",
         alignItems: "center"

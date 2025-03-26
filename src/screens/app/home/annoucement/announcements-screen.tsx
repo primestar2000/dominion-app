@@ -1,7 +1,7 @@
 // app/index.tsx - Church announcements home screen
 import { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, RefreshControl, ActivityIndicator, Image } from 'react-native';
-import { useFocusEffect, useRouter } from 'expo-router';
+// import { useFocusEffect, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AnnouncementType } from '@/utils/announcement-type';
 import { useTheme } from '@/context/theme-context';
@@ -38,12 +38,12 @@ const AnnouncementsScreen = () => {
 //     }
 //   };
 
-  useFocusEffect(
-    useCallback(() => {
-    //   loadAnnouncements();
-      return () => {};
-    }, [])
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //   //   loadAnnouncements();
+  //     return () => {};
+  //   }, [])
+  // );
 
   const handleRefresh = () => {
     // loadAnnouncements(true);

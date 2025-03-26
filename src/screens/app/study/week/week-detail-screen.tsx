@@ -16,137 +16,18 @@ import { studyData2 } from '@/utils/data';
 import { MainPoint, StudyType, SubPoint } from '@/utils/study-types';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { StudyNavigatorParamList } from '@/src/navigations/study-navigation';
+import { useAppSelector } from '@/redux/hooks';
+import StudyWeek from '@/components/StudyWeek';
 
-// Types for our data
-// interface SubPoint {
-//   title?: string;
-//   text?: string;
-//   sub_points?: string[];
-// }
-
-// interface MainPoint {
-//   title: string;
-//   text?: string;
-//   points?: SubPoint[];
-// }
-
-// interface Week {
-//   title: string;
-//   task?: string;
-//   main_points: MainPoint[];
-// }
-
-// interface Scripture {
-//   scripture: string;
-//   content: string;
-// }
-
-// interface Study {
-//   title: string;
-//   text: Scripture[];
-//   introduction: string;
-//   weeks: Week[];
-// }
-
-// // Sample data
-// const studyData: Study = {
-//   title: "Faith in Action: The Book of James",
-//   text: [
-//     {
-//       scripture: "James 1:2-4",
-//       content: "Consider it pure joy, my brothers and sisters, whenever you face trials of many kinds, because you know that the testing of your faith produces perseverance. Let perseverance finish its work so that you may be mature and complete, not lacking anything."
-//     },
-//     {
-//       scripture: "James 1:22",
-//       content: "Do not merely listen to the word, and so deceive yourselves. Do what it says."
-//     }
-//   ],
-//   introduction: "James, a servant of God and of the Lord Jesus Christ, writes to the twelve tribes scattered among the nations. This practical book focuses on living out our faith through actions and addresses how authentic faith behaves in daily life.",
-//   weeks: [
-//     {
-//       title: "Week 1: Faith and Trials",
-//       task: "Read James chapter 1 and reflect on how trials shape our faith.",
-//       main_points: [
-//         {
-//           title: "Finding Joy in Trials",
-//           text: "James calls us to consider trials as opportunities for joy and growth.",
-//           points: [
-//             {
-//               title: "The Purpose of Trials",
-//               text: "Trials test our faith and develop perseverance.",
-//               sub_points: [
-//                 "Trials reveal what we truly believe",
-//                 "Trials strengthen our character",
-//                 "Trials prepare us for greater service"
-//               ]
-//             },
-//             {
-//               title: "The Outcome of Perseverance",
-//               text: "Maturity and completeness come through enduring challenges.",
-//               sub_points: [
-//                 "Spiritual maturity",
-//                 "Emotional stability",
-//                 "Deeper relationship with God"
-//               ]
-//             }
-//           ]
-//         },
-//         {
-//           title: "Wisdom for the Journey",
-//           text: "God generously gives wisdom to those who ask in faith.",
-//           points: [
-//             {
-//               title: "How to Ask for Wisdom",
-//               text: "Ask with confidence and without doubting.",
-//               sub_points: [
-//                 "Believe that God wants to give wisdom",
-//                 "Trust God's timing and methods",
-//                 "Apply the wisdom you receive"
-//               ]
-//             }
-//           ]
-//         },
-//         {
-//           title: "Being Doers of the Word",
-//           text: "James emphasizes the importance of not just hearing but doing.",
-//           points: [
-//             {
-//               title: "The Danger of Self-Deception",
-//               text: "Merely listening without acting is spiritual self-deception.",
-//               sub_points: [
-//                 "Knowledge without application is fruitless",
-//                 "True blessing comes through action",
-//                 "Our actions demonstrate what we truly believe"
-//               ]
-//             }
-//           ]
-//         }
-//       ]
-//     },
-//     {
-//       title: "Week 2: Faith and Partiality",
-//       task: "Read James chapter 2 and examine how favoritism contradicts the gospel.",
-//       main_points: [
-//         {
-//           title: "Favoritism Forbidden",
-//           text: "Showing partiality contradicts faith in Christ."
-//         },
-//         {
-//           title: "The Royal Law of Love",
-//           text: "Loving your neighbor fulfills God's law."
-//         }
-//       ]
-//     }
-//   ]
-// };
 
 const WeekDetailScreen = ({route}:{route: any}) => {
   const { week, studyId, index } = route.params;
   // const router = useRouter();
   const {navigate, goBack} = useNavigation<NavigationProp<StudyNavigatorParamList>>();
+  const allWeeks = useAppSelector(store => store.studies.weeks)
   const weekIndex = Number(index) || 0;
-  const currentStudy = studyData2.find(item => item.id === studyId) as StudyType;
-  const weekData = currentStudy.weeks[weekIndex];
+  const StudyWeeks = allWeeks.filter(item => item.bible_study_id === studyId);
+  const weekData = StudyWeeks[weekIndex];
   
   // Expandable sections state
   const [expandedPoints, setExpandedPoints] = useState<{[key: number]: boolean}>({});
@@ -243,7 +124,7 @@ const WeekDetailScreen = ({route}:{route: any}) => {
   // Function to navigate to next or previous week
   const navigateToWeek = (offset: number) => {
     const newIndex = weekIndex + offset;
-    if (newIndex >= 0 && newIndex < currentStudy.weeks.length) {
+    if (newIndex >= 0 && newIndex < StudyWeeks.length) {
       navigate('studyWeekDetailScreen', {week: week, studyId: studyId, index: newIndex})
     }
   };
@@ -257,7 +138,7 @@ const WeekDetailScreen = ({route}:{route: any}) => {
         <TouchableOpacity onPress={() => goBack()}>
           <Ionicons name="arrow-back" size={24} color="#333" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{currentStudy.title}</Text>
+        <Text style={styles.headerTitle}>{weekData.title}</Text>
         <TouchableOpacity>
           <Ionicons name="share-outline" size={24} color="#333" />
         </TouchableOpacity>
@@ -283,7 +164,7 @@ const WeekDetailScreen = ({route}:{route: any}) => {
         {/* Key Scriptures */}
         <View style={styles.scriptureContainer}>
           <Text style={styles.sectionTitle}>Key Scriptures</Text>
-          {currentStudy.text.map((item, index) => (
+          {weekData.scriptures.map((item, index) => (
             <View style={styles.scriptureCard} key={index}>
               <Text style={styles.scripture}>{item.scripture}</Text>
               <Text style={styles.scriptureContent}>"{item.content}"</Text>
@@ -311,12 +192,12 @@ const WeekDetailScreen = ({route}:{route: any}) => {
           </TouchableOpacity>
           
           <TouchableOpacity 
-            style={[styles.navButton, weekIndex === currentStudy.weeks.length - 1 && styles.disabledNavButton]}
+            style={[styles.navButton, weekIndex === StudyWeeks.length - 1 && styles.disabledNavButton]}
             onPress={() => navigateToWeek(1)}
-            disabled={weekIndex === currentStudy.weeks.length - 1}
+            disabled={weekIndex === StudyWeeks.length - 1}
           >
-            <Text style={[styles.navButtonText, weekIndex === currentStudy.weeks.length - 1 && styles.disabledNavButtonText]}>Next Week</Text>
-            <Ionicons name="arrow-forward" size={16} color={weekIndex === currentStudy.weeks.length - 1 ? "#CCC" : "#3D5AF1"} />
+            <Text style={[styles.navButtonText, weekIndex === StudyWeeks.length - 1 && styles.disabledNavButtonText]}>Next Week</Text>
+            <Ionicons name="arrow-forward" size={16} color={weekIndex === StudyWeeks.length - 1 ? "#CCC" : "#3D5AF1"} />
           </TouchableOpacity>
         </View>
       </ScrollView>

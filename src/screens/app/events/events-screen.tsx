@@ -1,383 +1,560 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
-  StyleSheet, 
-  Text, 
   View, 
-  ScrollView, 
-  TouchableOpacity, 
+  Text, 
+  StyleSheet, 
   Image, 
+  TouchableOpacity, 
+  ScrollView,
   StatusBar,
-  TextInput,
+  SafeAreaView,
   Dimensions,
   FlatList
 } from 'react-native';
-import { Ionicons, FontAwesome5, MaterialIcons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import FloatableButton from '@/components/FloatableButton';
-import { useRouter } from 'expo-router';
-import { EventCategory, EventItem } from '@/utils/event-types';
-import renderEventCard from '@/components/features/events/event-card2';
-import { eventsDataTest } from '@/utils/data';
+import { Link, Stack, useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
-// Get device dimensions for responsive design
+// Get the screen dimensions
 const { width } = Dimensions.get('window');
 
-// Types
+// Event type definitions
+export type EventCategory = 'all' | 'worship' | 'youth' | 'community' | 'bible';
+export type EventItem = {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  location?: string;
+  description: string;
+  category?: EventCategory;
+  image?: any;
+  isFeatured?: boolean;
+};
 
-
-
-
-const EventsScreen: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState<EventCategory>('all');
-  const [searchQuery, setSearchQuery] = useState<string>('');
+export default function EventsScreen() {
   const router = useRouter();
-  // Mock event data
-  const [events] = useState<EventItem[]>(eventsDataTest);
-
-  // Filter events based on selected category and search query
-  const filteredEvents = events.filter(event => {
-    const matchesCategory = selectedCategory === 'all' || event.category === selectedCategory;
-    const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          event.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && (searchQuery === '' || matchesSearch);
-  });
-
-  // Get featured events
-  const featuredEvents = events.filter(event => event.isFeatured);
-
-  // Categories for filter tabs
-  const categories = [
-    { id: 'all', name: 'All Events', icon: 'calendar' },
-    { id: 'worship', name: 'Worship', icon: 'church' },
-    { id: 'youth', name: 'Youth', icon: 'child' },
-    { id: 'community', name: 'Community', icon: 'users' },
-    { id: 'bible', name: 'Bible Study', icon: 'book' },
-  ];
-
-  // Render event card
+  const [selectedCategory, setSelectedCategory] = useState<EventCategory>('all');
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [filteredEvents, setFilteredEvents] = useState<EventItem[]>([]);
   
+  // Sample event data
+  const sampleEvents: EventItem[] = [
+    {
+      id: '1',
+      title: 'Sunday Worship Service',
+      date: 'Mar 23, 2025',
+      time: '10:00 AM - 12:00 PM',
+      location: 'Main Sanctuary',
+      description: 'Join us for our weekly worship service with praise, prayer, and a powerful message from Pastor Michael Johnson.',
+      category: 'worship',
+      image: 'https://via.placeholder.com/500x300',
+      isFeatured: true,
+    },
+    {
+      id: '2',
+      title: 'Youth Night',
+      date: 'Mar 26, 2025',
+      time: '6:30 PM - 8:30 PM',
+      location: 'Youth Center',
+      description: 'A night of fun, fellowship, and spiritual growth for teens and young adults.',
+      category: 'youth',
+      image: 'https://via.placeholder.com/500x300',
+      isFeatured: false,
+    },
+    {
+      id: '3',
+      title: 'Community Food Drive',
+      date: 'Mar 28, 2025',
+      time: '9:00 AM - 1:00 PM',
+      location: 'Church Parking Lot',
+      description: 'Help us serve our community by donating non-perishable food items. Volunteers needed!',
+      category: 'community',
+      image: 'https://via.placeholder.com/500x300',
+      isFeatured: true,
+    },
+    {
+      id: '4',
+      title: 'Bible Study: Book of Romans',
+      date: 'Mar 25, 2025',
+      time: '7:00 PM - 8:30 PM',
+      location: 'Fellowship Hall',
+      description: 'An in-depth study of the Book of Romans led by Elder James Wilson. Bring your Bible and notebook.',
+      category: 'bible',
+      image: 'https://via.placeholder.com/500x300',
+      isFeatured: false,
+    },
+    {
+      id: '5',
+      title: 'Prayer Breakfast',
+      date: 'Mar 29, 2025',
+      time: '8:00 AM - 9:30 AM',
+      location: 'Fellowship Hall',
+      description: 'Start your weekend with prayer and fellowship. Breakfast will be provided.',
+      category: 'worship',
+      image: 'https://via.placeholder.com/500x300',
+      isFeatured: false,
+    },
+    {
+      id: '6',
+      title: 'Children\'s Ministry Workshop',
+      date: 'Apr 2, 2025',
+      time: '6:00 PM - 8:00 PM',
+      location: 'Children\'s Wing',
+      description: 'Training session for current and new children\'s ministry volunteers.',
+      category: 'community',
+      image: 'https://via.placeholder.com/500x300',
+      isFeatured: false,
+    },
+  ];
+  
+  // Initialize events
+  useEffect(() => {
+    setEvents(sampleEvents);
+    setFilteredEvents(sampleEvents);
+  }, []);
+  
+  // Filter events by category
+  const filterEvents = (category: EventCategory) => {
+    setSelectedCategory(category);
+    if (category === 'all') {
+      setFilteredEvents(events);
+    } else {
+      setFilteredEvents(events.filter(event => event.category === category));
+    }
+  };
+  
+  // Calculate days remaining until event
+  const getDaysRemaining = (dateString: string) => {
+    const eventDate = new Date(dateString);
+    const today = new Date();
+    
+    // Reset the time component to get accurate day difference
+    eventDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+    
+    const diffTime = eventDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return '1 day left';
+    if (diffDays > 0) return `${diffDays} days left`;
+    return 'Past event';
+  };
+  
+  // Navigate to event details
+  const goToEventDetails = (id: string) => {
+    router.push(`/events/${id}`);
+  };
+  
+  // Render category pill
+  const renderCategoryPill = (category: EventCategory, label: string) => (
+    <TouchableOpacity
+      style={[
+        styles.categoryPill,
+        selectedCategory === category && styles.categoryPillActive
+      ]}
+      onPress={() => filterEvents(category)}
+    >
+      <Text
+        style={[
+          styles.categoryText,
+          selectedCategory === category && styles.categoryTextActive
+        ]}
+      >
+        {label}
+      </Text>
+    </TouchableOpacity>
+  );
+  
+  // Render featured event
+  const renderFeaturedEvent = ({ item }: { item: EventItem }) => (
+    <TouchableOpacity
+      style={styles.featuredCard}
+      onPress={() => goToEventDetails(item.id)}
+    >
+      <Image
+        source={{ uri: item.image }}
+        style={styles.featuredImage}
+        resizeMode="cover"
+      />
+      <View style={styles.featuredOverlay}>
+        <View style={styles.featuredBadge}>
+          <Text style={styles.featuredBadgeText}>Featured</Text>
+        </View>
+      </View>
+      <View style={styles.featuredContent}>
+        <Text style={styles.featuredTitle}>{item.title}</Text>
+        <View style={styles.featuredMeta}>
+          <View style={styles.metaItem}>
+            <Ionicons name="calendar-outline" size={14} color="#FFF" />
+            <Text style={styles.featuredMetaText}>{item.date}</Text>
+          </View>
+          <View style={styles.metaItem}>
+            <Ionicons name="time-outline" size={14} color="#FFF" />
+            <Text style={styles.featuredMetaText}>{item.time}</Text>
+          </View>
+        </View>
+        <View style={styles.daysRemainingBadge}>
+          <Text style={styles.daysRemainingText}>{getDaysRemaining(item.date)}</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+
+  // Render regular event item
+  const renderEventItem = ({ item }: { item: EventItem }) => (
+    <TouchableOpacity
+      style={styles.eventCard}
+      onPress={() => goToEventDetails(item.id)}
+    >
+      <Image
+        source={{ uri: item.image }}
+        style={styles.eventImage}
+        resizeMode="cover"
+      />
+      <View style={styles.eventContent}>
+        <Text style={styles.eventTitle} numberOfLines={2}>{item.title}</Text>
+        
+        <View style={styles.eventMeta}>
+          <View style={styles.metaItem}>
+            <Ionicons name="calendar-outline" size={14} color="#666" />
+            <Text style={styles.metaText}>{item.date}</Text>
+          </View>
+          <View style={styles.metaItem}>
+            <Ionicons name="time-outline" size={14} color="#666" />
+            <Text style={styles.metaText}>{item.time}</Text>
+          </View>
+        </View>
+        
+        {item.location && (
+          <View style={styles.locationContainer}>
+            <Ionicons name="location-outline" size={14} color="#666" />
+            <Text style={styles.metaText} numberOfLines={1}>{item.location}</Text>
+          </View>
+        )}
+        
+        <View style={styles.eventFooter}>
+          {item.category && (
+            <View style={[styles.categoryTag, getCategoryStyle(item.category)]}>
+              <Text style={styles.categoryTagText}>{getCategoryLabel(item.category)}</Text>
+            </View>
+          )}
+          <Text style={styles.daysText}>{getDaysRemaining(item.date)}</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+  
+  // Get category label
+  const getCategoryLabel = (category: EventCategory): string => {
+    switch(category) {
+      case 'worship': return 'Worship';
+      case 'youth': return 'Youth';
+      case 'community': return 'Community';
+      case 'bible': return 'Bible Study';
+      default: return 'General';
+    }
+  };
+  
+  // Get category style
+  const getCategoryStyle = (category: EventCategory) => {
+    switch(category) {
+      case 'worship': return styles.categoryWorship;
+      case 'youth': return styles.categoryYouth;
+      case 'community': return styles.categoryCommunity;
+      case 'bible': return styles.categoryBible;
+      default: return {};
+    }
+  };
+  
+  // Featured events
+  const featuredEvents = filteredEvents.filter(event => event.isFeatured);
+  
+  // Regular events (non-featured)
+  const regularEvents = filteredEvents.filter(event => !event.isFeatured);
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" />
-      
-      {/* Header */}
-      <LinearGradient
-        colors={['blue', 'skyblue']}
-        start={[0, 0]}
-        end={[1, 1]}
-        style={styles.header}
-      >
-        <View style={styles.headerContent}>
-          <View style={styles.searchContainer}>
-            <Ionicons name="search-outline" size={20} color="#6A0572" style={styles.searchIcon} />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search events..."
-              placeholderTextColor="#999"
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
-            {searchQuery.length > 0 && (
-              <TouchableOpacity style={styles.clearButton} onPress={() => setSearchQuery('')}>
-                <Ionicons name="close-circle" size={20} color="#999" />
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
-      </LinearGradient>
+      <StatusBar barStyle="dark-content" />
 
-      {/* Content */}
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Featured Events Section */}
-        {featuredEvents.length > 0 && searchQuery === '' && selectedCategory === 'all' && (
-          <View style={styles.featuredContainer}>
+      
+      <View style={styles.categoriesContainer}>
+        <ScrollView 
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.categoriesScroll}
+        >
+          {renderCategoryPill('all', 'All Events')}
+          {renderCategoryPill('worship', 'Worship')}
+          {renderCategoryPill('youth', 'Youth')}
+          {renderCategoryPill('community', 'Community')}
+          {renderCategoryPill('bible', 'Bible Study')}
+        </ScrollView>
+      </View>
+      
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {/* Featured Events */}
+        {featuredEvents.length > 0 && (
+          <View style={styles.section}>
             <Text style={styles.sectionTitle}>Featured Events</Text>
-            <ScrollView 
-              horizontal 
+            <FlatList
+              data={featuredEvents}
+              renderItem={renderFeaturedEvent}
+              keyExtractor={(item) => item.id}
+              horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.featuredScrollContainer}
-            >
-              {featuredEvents.map(event => (
-                <TouchableOpacity key={event.id} style={styles.featuredEventCard}>
-                  <Image source={{uri:event.image}} style={styles.featuredEventImage} />
-                  <LinearGradient
-                    colors={['transparent', 'rgba(0,0,0,0.8)']}
-                    style={styles.featuredEventGradient}
-                  >
-                    <View style={styles.featuredEventContent}>
-                      <Text style={styles.featuredEventTitle}>{event.title}</Text>
-                      <View style={styles.featuredEventMeta}>
-                        <Ionicons name="calendar-outline" size={14} color="white" />
-                        <Text style={styles.featuredEventMetaText}>{event.date}</Text>
-                      </View>
-                      <View style={styles.featuredEventBadge}>
-                        <Text style={styles.featuredEventBadgeText}>Featured</Text>
-                      </View>
-                    </View>
-                  </LinearGradient>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
+              contentContainerStyle={styles.featuredList}
+              snapToInterval={width - 48}
+              decelerationRate="fast"
+              pagingEnabled
+            />
           </View>
         )}
-
-        {/* Category Tabs */}
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          style={styles.categoriesContainer}
-          contentContainerStyle={styles.categoriesContent}
-        >
-          {categories.map(category => (
-            <TouchableOpacity 
-              key={category.id} 
-              style={[
-                styles.categoryTab, 
-                selectedCategory === category.id && styles.categoryTabActive
-              ]}
-              onPress={() => setSelectedCategory(category.id as EventCategory)}
-            >
-              <FontAwesome5 
-                name={category.icon} 
-                size={16} 
-                color={selectedCategory === category.id ? 'white' : '#6A0572'} 
-              />
-              <Text 
-                style={[
-                  styles.categoryTabText, 
-                  selectedCategory === category.id && styles.categoryTabTextActive
-                ]}
-              >
-                {category.name}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-
-        {/* Events List */}
-        <View style={styles.eventsListContainer}>
-          {filteredEvents.length > 0 ? (
-            <FlatList
-              data={filteredEvents}
-              renderItem={renderEventCard}
-              keyExtractor={item => item.id}
-              scrollEnabled={false}
-              contentContainerStyle={styles.eventsList}
-            />
+        
+        {/* Upcoming Events */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Upcoming Events</Text>
+          {regularEvents.length > 0 ? (
+            regularEvents.map(event => (
+              <View key={event.id}>
+                {renderEventItem({ item: event })}
+              </View>
+            ))
           ) : (
             <View style={styles.noEventsContainer}>
-              <Ionicons name="calendar" size={60} color="#DDD" />
-              <Text style={styles.noEventsText}>No events found</Text>
-              <Text style={styles.noEventsSubtext}>
-                Try adjusting your search or filters
-              </Text>
+              <Ionicons name="calendar-outline" size={48} color="#CCC" />
+              <Text style={styles.noEventsText}>No events in this category</Text>
             </View>
           )}
         </View>
       </ScrollView>
-        <FloatableButton
-        icon={<MaterialIcons name='add' size={30} color={"blue"} />}
-        // onPress={() => {router.navigate('/(tabs)/(events)/create')}}
-          onPress={()=>{}}
-        />
-      
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: '#F9F9F9',
   },
-  header: {
-    paddingTop: 20,
-    paddingBottom: 25,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '700',
   },
-  headerContent: {
-    paddingHorizontal: 20,
+  categoriesContainer: {
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EFEFEF',
+    backgroundColor: '#FFFFFF',
   },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    borderRadius: 12,
-    paddingHorizontal: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 3,
+  categoriesScroll: {
+    paddingHorizontal: 16,
   },
-  searchIcon: {
+  categoryPill: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
     marginRight: 10,
+    backgroundColor: '#EFEFEF',
   },
-  searchInput: {
-    flex: 1,
-    height: 45,
-    fontSize: 16,
-    color: '#333',
+  categoryPillActive: {
+    backgroundColor: '#3D5AF1',
   },
-  clearButton: {
-    padding: 5,
+  categoryText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#666',
   },
-  featuredContainer: {
-    marginTop: 20,
-    paddingHorizontal: 15,
+  categoryTextActive: {
+    color: '#FFFFFF',
+  },
+  scrollContent: {
+    paddingBottom: 20,
+  },
+  section: {
+    marginTop: 24,
+    paddingHorizontal: 24,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '700',
     color: '#333',
-    marginBottom: 15,
+    marginBottom: 16,
   },
-  featuredScrollContainer: {
-    paddingBottom: 15,
+  featuredList: {
+    paddingRight: 24,
   },
-  featuredEventCard: {
-    width: width * 0.8,
-    height: 180,
-    borderRadius: 15,
-    marginRight: 15,
+  featuredCard: {
+    width: width - 48,
+    height: 200,
+    marginRight: 16,
+    borderRadius: 16,
     overflow: 'hidden',
+    backgroundColor: '#FFF',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
     elevation: 5,
   },
-  featuredEventImage: {
+  featuredImage: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover',
   },
-  featuredEventGradient: {
+  featuredOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+  },
+  featuredBadge: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    backgroundColor: '#FF4B4B',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 12,
+  },
+  featuredBadgeText: {
+    color: '#FFF',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  featuredContent: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    height: '60%',
-    justifyContent: 'flex-end',
-    padding: 15,
+    padding: 16,
   },
-  featuredEventContent: {
-    width: '100%',
-  },
-  featuredEventTitle: {
-    color: 'white',
+  featuredTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 5,
+    fontWeight: '700',
+    color: '#FFF',
+    marginBottom: 8,
+    textShadowColor: 'rgba(0,0,0,0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
-  featuredEventMeta: {
+  featuredMeta: {
     flexDirection: 'row',
-    alignItems: 'center',
+    marginBottom: 4,
   },
-  featuredEventMetaText: {
-    color: 'white',
-    marginLeft: 5,
-    fontSize: 14,
-  },
-  featuredEventBadge: {
-    position: 'absolute',
-    top: -60,
-    right: 0,
-    backgroundColor: '#FF6B6B',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-  },
-  featuredEventBadgeText: {
-    color: 'white',
+  featuredMetaText: {
     fontSize: 12,
-    fontWeight: 'bold',
+    color: '#FFF',
+    marginLeft: 4,
+    textShadowColor: 'rgba(0,0,0,0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
-  categoriesContainer: {
-    marginTop: 15,
+  daysRemainingBadge: {
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#3D5AF1',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderTopLeftRadius: 12,
   },
-  categoriesContent: {
-    paddingHorizontal: 15,
+  daysRemainingText: {
+    color: '#FFF',
+    fontSize: 12,
+    fontWeight: '600',
   },
-  categoryTab: {
+  eventCard: {
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  eventImage: {
+    width: 100,
+    height: 100,
+    borderTopLeftRadius: 16,
+    borderBottomLeftRadius: 16,
+  },
+  eventContent: {
+    flex: 1,
+    padding: 12,
+  },
+  eventTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 6,
+  },
+  eventMeta: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 6,
+  },
+  metaItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    backgroundColor: 'white',
-    borderRadius: 25,
-    marginRight: 10,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
+    marginRight: 12,
+    marginBottom: 4,
   },
-  categoryTabActive: {
-    backgroundColor: '#6A0572',
-    borderColor: '#6A0572',
+  metaText: {
+    fontSize: 12,
+    color: '#666',
+    marginLeft: 4,
   },
-  categoryTabText: {
-    marginLeft: 8,
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#6A0572',
+  locationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
   },
-  categoryTabTextActive: {
-    color: 'white',
+  eventFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 'auto',
   },
-  eventsListContainer: {
-    marginTop: 20,
-    paddingHorizontal: 15,
-    paddingBottom: 80,
+  categoryTag: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+    backgroundColor: '#EFEFEF',
   },
-  eventsList: {
-    paddingBottom: 20,
+  categoryTagText: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#333',
   },
- 
- 
+  categoryWorship: {
+    backgroundColor: '#E3F2FD',
+  },
+  categoryYouth: {
+    backgroundColor: '#F9FBE7',
+  },
+  categoryCommunity: {
+    backgroundColor: '#E8F5E9',
+  },
+  categoryBible: {
+    backgroundColor: '#F3E5F5',
+  },
+  daysText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#3D5AF1',
+  },
   noEventsContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 30,
+    paddingVertical: 40,
   },
   noEventsText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#666',
-    marginTop: 15,
-  },
-  noEventsSubtext: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#999',
-    textAlign: 'center',
-    marginTop: 5,
-  },
-  bottomNav: {
-    flexDirection: 'row',
-    backgroundColor: 'white',
-    borderTopWidth: 1,
-    borderTopColor: '#EEEEEE',
-    paddingVertical: 10,
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
-  navItem: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  navText: {
-    fontSize: 12,
-    marginTop: 3,
-    color: '#888',
-  },
-  activeNavText: {
-    color: '#6A0572',
-    fontWeight: '600',
+    marginTop: 12,
   },
 });
-
-export default EventsScreen;

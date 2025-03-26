@@ -15,6 +15,7 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { MediaNavigatorParamList } from '@/src/navigations/media-navigator';
+import { useAppSelector } from '@/redux/hooks';
 
 // Types for our data
 type VideoCategory = 'all' | 'sermons' | 'worship' | 'events' | 'testimonies';
@@ -96,11 +97,12 @@ export default function VideoScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<VideoCategory>('all');
   const {navigate} = useNavigation<NavigationProp<MediaNavigatorParamList>>();
+  const userRole = useAppSelector( store => store.auth.user?.role);
   
   // Filter videos based on search and category
   const filteredVideos = videoData.filter(video => {
     const matchesSearch = video.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          (video.speaker && video.speaker.toLowerCase().includes(searchQuery.toLowerCase()));
+    (video.speaker && video.speaker.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesCategory = activeCategory === 'all' || video.category === activeCategory;
     return matchesSearch && matchesCategory;
   });
@@ -174,10 +176,14 @@ export default function VideoScreen() {
           </TouchableOpacity>
           {/* </Link> */}
           {/* <Link  href={{pathname: "/(tabs)/(media)/(audio)"}} asChild> */}
-            <TouchableOpacity onPress={()=>{navigate('audioScreen')}} style={styles.headerIconButton}>
-            {/* <Ionicons name="notifications-outline" size={24} color="#333" /> */}
-            <Text style={styles.headerButtonText}>Audio</Text>
-            </TouchableOpacity>
+          {
+            userRole === "admin" && (
+              <TouchableOpacity onPress={()=>{navigate('audioScreen')}} style={styles.headerIconButton}>
+              {/* <Ionicons name="notifications-outline" size={24} color="#333" /> */}
+              <Text style={styles.headerButtonText}>Audio</Text>
+              </TouchableOpacity>
+            )
+          }
         {/* </Link> */}
         </View>
         

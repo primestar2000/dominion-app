@@ -18,6 +18,7 @@ import { Ionicons, MaterialIcons, FontAwesome, FontAwesome6 } from '@expo/vector
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { HomeStackNavigatorParamList } from '@/src/navigations/home-stack-navigator';
+import AddButtonCircle from '@/components/add-button-circle';
 
 // Types
 interface PrayerRequest {
@@ -245,12 +246,7 @@ export default function PrayerRequestsScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Prayer Requests</Text>
-        <TouchableOpacity 
-          style={styles.addButton}
-          onPress={() => setIsModalVisible(true)}
-        >
-          <Ionicons name="add" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
+        <AddButtonCircle onPress={()=>{setIsModalVisible(true)}} enableOnAdmin={true} />
       </View>
       
       {/* Prayer Requests List */}
@@ -379,14 +375,6 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '600',
     color: '#333',
-  },
-  addButton: {
-    backgroundColor: '#3D5AF1',
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   loadingContainer: {
     flex: 1,

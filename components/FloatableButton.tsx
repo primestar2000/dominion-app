@@ -1,11 +1,17 @@
 import { StyleSheet, GestureResponderEvent, TouchableOpacity } from 'react-native'
 import React from 'react'
+import { useAppSelector } from '@/redux/hooks';
 
 interface floatableButtonProp {
   icon: React.JSX.Element,
-  onPress: ((event: GestureResponderEvent) => void) | undefined
+  onPress: ((event: GestureResponderEvent) => void) | undefined,
+  enableOnlyAdmin?: boolean; 
 }
-const FloatableButton = ({icon, onPress}:floatableButtonProp) => {
+const FloatableButton = ({icon, onPress, enableOnlyAdmin=false}:floatableButtonProp) => {
+  const {user} = useAppSelector( store => store.auth)
+  if (enableOnlyAdmin && user?.role !== "admin") {
+    return null;
+  }
   return (
     <TouchableOpacity onPress={onPress} style={styles.frame}>
       {icon}

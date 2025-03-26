@@ -38,7 +38,7 @@ const SignIn = ({ navigation }: { navigation: NavigationProp<any> }) => {
             }
             
             if (data.session && data.user) {
-                Alert.alert('Success', 'Logged in successfully');
+                // Alert.alert('Success', 'Logged in successfully');
             } else {
                 setErrorMessage('Login was not successful');
             }
@@ -54,20 +54,7 @@ const SignIn = ({ navigation }: { navigation: NavigationProp<any> }) => {
         Linking.openURL('exp+dominion-mobile-app://expo-development-client/?url=http%3A%2F%2F192.168.55.37%3A8081/emailVerify');
     };
 
-    useEffect(()=>{
-        const getSession = async() => {
-            const {data, error} = await supabase.auth.getUser();
-            if (error) {
-                console.log(error)
-                return
-            }
-            if (data.user) {
-                console.log("onload", data.user)
-                return
-            }
-        }
-        getSession();
-    })
+
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar style="light" />

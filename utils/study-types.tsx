@@ -10,23 +10,41 @@ export interface SubPoint {
     points?: SubPoint[];
   }
   
-  export interface WeekType {
-    id: string;
-    title: string;
-    task?: string;
-    main_points: MainPoint[];
-  }
-  
   export interface Scripture {
     scripture: string;
     content: string;
   }
+  export interface WeekType {
+    bible_study_id?: string;
+    id: string;
+    title: string;
+    task?: string;
+    scriptures: Scripture[],
+    main_points: MainPoint[];
+  }
+  export interface WeekTypeRequest {
+    bible_study_id?: string;
+    title: string;
+    task?: string;
+    scriptures: Scripture[],
+    main_points: MainPoint[];
+
+  }
+  
   
   export interface StudyType {
     id: string;
     title: string;
     month: string;
-    text: Scripture[];
+    bible_text: Scripture[];
     introduction: string;
-    weeks: WeekType[];
+    // weeks: WeekType[];
+  }
+  export interface StudyTypeRequest {
+    id?: string;
+    title: string;
+    month: string;
+    bible_text: Scripture[];
+    introduction: string;
+    // weeks: WeekType[];
   }

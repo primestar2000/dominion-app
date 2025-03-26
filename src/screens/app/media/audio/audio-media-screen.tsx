@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { useAppSelector } from '@/redux/hooks';
 
 // Types for our data
 type AudioCategory = 'all' | 'sermons' | 'worship' | 'podcasts' | 'bible-studies' | 'prayer';
@@ -107,6 +108,7 @@ const audioData: AudioItem[] = [
 const AudioScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<AudioCategory>('all');
+  const userRole = useAppSelector( store => store.auth.user?.role);
   const router = useRouter()
   
   // Filter audio items based on search and category
@@ -202,9 +204,13 @@ const AudioScreen = () => {
         <Text style={styles.headerTitle}>Audio</Text>
         <View style={{flexDirection: 'row', gap: 15}}>
           <Link asChild href={{pathname: "/(tabs)/(media)/(audio)/create"}}>
-          <TouchableOpacity>
-            <MaterialIcons name='add' size={30} />
-          </TouchableOpacity>
+          {
+            userRole === "admin" && (
+            <TouchableOpacity>
+              <MaterialIcons name='add' size={30} />
+            </TouchableOpacity>
+            )
+          }
           </Link>
           <Link href={{pathname: "/(tabs)/(media)/(video)"}} asChild>
           <TouchableOpacity style={styles.headerIconButton}>

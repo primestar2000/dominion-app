@@ -5,15 +5,18 @@ import { ActivityIndicator } from 'react-native';
 import CurrentStudyMain from '@/components/currentStudyMain';
 import { useLocalSearchParams } from 'expo-router';
 import { studyData2 } from '@/utils/data';
+import { useAppSelector } from '@/redux/hooks';
 
 
 
 const CurrentStudy = ({ route }: {route: any}) => {
+  const studies = useAppSelector(store => store.studies.studies)
     const { study } = route.params; 
-    const studyData = studyData2.find(item => item.id == study)
+    const studyData = studies.find(item => item.id == study)
+
   return (
     <View style={styles.frame}>
-      {/* <Text>{}</Text> */}
+      {/* <Text>{'current study'}</Text> */}
       <Suspense fallback={<ActivityIndicator size="large" color="#0000ff" />}>
         {/* <CurrentStudyMain navigation={navigation} docData={docData} /> */}
         {

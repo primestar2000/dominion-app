@@ -1,4 +1,4 @@
-import { ActivityIndicator, Alert, Image, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useCallback, useRef, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,11 +15,15 @@ import { AuthStackParamList } from '@/src/navigations/auth-navigation';
 import InputField from '@/components/inputField';
 import LoaderComponent from '@/components/loaderComponent';
 import { churchBranch } from '@/utils/church-branches-types';
+import { useAppDispatch } from '@/redux/hooks';
+import RegisterUserThunk from '@/redux/auth/register-user-thunk';
+import { ResponceMessageType } from '@/utils/other-types';
 
 const SignUp = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const { isAuthenticated } = useAuth();
     const { setIsOnboarded } = useOnBoarded();
+    const dispatch = useAppDispatch();
     const bottomSheetRef = useRef(null);
     const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
     
@@ -36,16 +40,6 @@ const SignUp = () => {
     const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
     const [churchBranches, setChurchBranches] = useState<churchBranch[] | null>([]);
     const [selectedBranch, setSelectedBranch] = useState<{id:string, name: string} | null>(null);
-
-    // Church branches with IDs
-    // const churchBranches = [
-    //     { id: 1, name: "Main Campus" },
-    //     { id: 2, name: "North Campus" },
-    //     { id: 3, name: "South Campus" },
-    //     { id: 4, name: "East Campus" },
-    //     { id: 5, name: "West Campus" },
-    //     { id: 6, name: "Downtown Campus" }
-    // ];
 
     const validateForm = () => {
         const { name, email, password, confirmPassword, branch } = formInput;
@@ -78,6 +72,10 @@ const SignUp = () => {
             setErrorMessage('Passwords do not match');
             return false;
         }
+        if (selectedBranch?.id === '' || selectedBranch === null) {
+            setErrorMessage('Please Select a church branch')
+            return false;
+        }
         
         setErrorMessage('');
         return true;
@@ -91,47 +89,23 @@ const SignUp = () => {
     };
 
     const initiateSignUp = async () => {
-        try {
-            const { email, password, name, branch } = formInput;
-            
-            const {
-                data: { session },
-                error,
-            } = await supabase.auth.signUp({
-                email: email,
-                password: password,
-                options: { 
-                    data: {
-                        name: formInput.name.toLowerCase(),
-                        church_branch_id: selectedBranch?.id, // Convert branch to a number
-                    },
+            await dispatch(RegisterUserThunk({
+                name: formInput.name,
+                email: formInput.email,
+                password: formInput.password,
+                branchId: selectedBranch ? selectedBranch?.id : '',
+            })).then((result)=>{
+                if (result.meta.requestStatus === "rejected") {
+                    const message = result.payload as ResponceMessageType
+                    setErrorMessage(message.message);
                 }
+                if (result.meta.requestStatus === "fulfilled") {
+                    const message = result.payload as ResponceMessageType
+                    setErrorMessage(message.message);
+                }
+            }).finally(()=>{
+                setLoading(false);
             });
-          
-            if (error) {
-                setErrorMessage(error.message);
-                setLoading(false);
-                console.log(error);
-                return;
-            }
-            
-            if (!session) {
-                Alert.alert('Success', 'Please check your inbox for email verification!');
-                setLoading(false);
-                return;
-            }
-        
-            if (session) {
-                // fetchUserProfile(session.user.id);
-                // console.log('session: ', session)
-            }
-                
-                setLoading(false);
-            } catch (err) {
-                setLoading(false);
-                setErrorMessage('An unexpected error occurred');
-                console.error(err);
-            }
         };
         // const fetchUserProfile = async (user_id:string) => {
         //     const {data, error} = await supabase.from('user_profiles').select("*").eq("user_id", user_id).single();
@@ -317,7 +291,7 @@ const SignUp = () => {
                         <BottomSheet
                             ref={bottomSheetRef}
                             onChange={handleSheetChanges}
-                            snapPoints={['40%']}
+                            snapPoints={['50%']}
                             enablePanDownToClose={true}
                             onClose={() => setBottomSheetOpen(false)}
                         >

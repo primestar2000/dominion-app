@@ -10,13 +10,17 @@ import {
   StatusBar,
   KeyboardAvoidingView,
   Platform,
-  Alert
+  Alert,
+  Modal
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
 import { useNavigation } from '@react-navigation/native';
+import { useAppDispatch } from '@/redux/hooks';
+import CreateStudyThunk from '@/redux/app/create-study-thunk';
+import { StudyTypeRequest } from '@/utils/study-types';
 
 // Types for our data
 export interface Scripture {
@@ -40,17 +44,21 @@ export interface StudyType {
   weeks: WeekType[];
 }
 
+interface componentProp {
+  onClose: () => void;
+}
+
 // Month options for the picker
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
-export default function CreateStudyScreen() {
+export default function CreateStudyModal({onClose}:componentProp) {
   // const router = useRouter();
-  const { goBack } = useNavigation();
   
   // State for form data
+  const dispatch = useAppDispatch();
   const [title, setTitle] = useState('');
   const [month, setMonth] = useState(MONTHS[new Date().getMonth()]); // Default to current month
   const [introduction, setIntroduction] = useState('');
@@ -109,43 +117,42 @@ export default function CreateStudyScreen() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  
+  const handleOnClose = () => {
+    onClose();
+  }
   // Handle form submission
   const handleSubmit = () => {
     if (validateForm()) {
       setIsSubmitting(true);
       
       // Create the study object
-      const newStudy: StudyType = {
-        id: uuidv4(),
+      const newStudy: StudyTypeRequest = {
+        // id: uuidv4(),
         title,
         month,
-        text: scriptures,
+        bible_text: scriptures,
         introduction,
-        weeks: [] // Initially empty, will be added later
+        // weeks: [] // Initially empty, will be added later
       };
       
-      // Simulate API call
-      setTimeout(() => {
-        setIsSubmitting(false);
-        Alert.alert(
-          "Success", 
-          "Bible study created successfully!",
-          [{ 
-            text: "OK", 
-            onPress: () => {
-              // In a real app, you might navigate to the study detail page
-              goBack();
-            }
-          }]
-        );
-      }, 1500);
-      
-      // In a real app, you would send the data to your backend here
-      // api.post('/bible-studies', newStudy)...
+      createStudy();
+
     }
   };
   
+  const createStudy = () => {
+    dispatch(CreateStudyThunk({
+      title: title,
+      month: month,
+      introduction: introduction,
+      bible_text: scriptures
+    })).then(()=>{
+
+    }).finally(()=>{
+      setIsSubmitting(false);
+    })
+  }
+
   // Month picker component
   const renderMonthPicker = () => {
     if (!showMonthPicker) return null;
@@ -184,13 +191,16 @@ export default function CreateStudyScreen() {
     );
   };
 
+
   return (
+    <Modal animationType='slide' onRequestClose={handleOnClose}>
+
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
       
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => goBack()}>
+        <TouchableOpacity onPress={handleOnClose}>
           <Ionicons name="close" size={24} color="#333" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Create Bible Study</Text>
@@ -235,7 +245,7 @@ export default function CreateStudyScreen() {
             <TouchableOpacity 
               style={styles.selectInput}
               onPress={() => setShowMonthPicker(true)}
-            >
+              >
               <Text style={styles.selectInputText}>{month}</Text>
               <Ionicons name="chevron-down" size={20} color="#777" />
             </TouchableOpacity>
@@ -277,8 +287,8 @@ export default function CreateStudyScreen() {
                   <Text style={styles.formSubtitle}>Scripture {index + 1}</Text>
                   {scriptures.length > 1 && (
                     <TouchableOpacity 
-                      style={styles.removeButton}
-                      onPress={() => removeScripture(index)}
+                    style={styles.removeButton}
+                    onPress={() => removeScripture(index)}
                     >
                       <Ionicons name="trash-outline" size={16} color="#FF3B30" />
                       <Text style={styles.removeButtonText}>Remove</Text>
@@ -292,7 +302,7 @@ export default function CreateStudyScreen() {
                   placeholder="e.g., James 1:2-4"
                   value={scripture.scripture}
                   onChangeText={(value) => updateScripture(index, 'scripture', value)}
-                />
+                  />
                 {errors[`scripture_${index}`] && (
                   <Text style={styles.errorText}>{errors[`scripture_${index}`]}</Text>
                 )}
@@ -306,7 +316,7 @@ export default function CreateStudyScreen() {
                   multiline
                   numberOfLines={4}
                   textAlignVertical="top"
-                />
+                  />
                 {errors[`content_${index}`] && (
                   <Text style={styles.errorText}>{errors[`content_${index}`]}</Text>
                 )}
@@ -324,12 +334,14 @@ export default function CreateStudyScreen() {
               {isSubmitting ? "Creating Bible Study..." : "Create Bible Study"}
             </Text>
           </TouchableOpacity>
+          
         </ScrollView>
       </KeyboardAvoidingView>
       
       {/* Month Picker Modal */}
       {renderMonthPicker()}
     </SafeAreaView>
+    </Modal>
   );
 }
 

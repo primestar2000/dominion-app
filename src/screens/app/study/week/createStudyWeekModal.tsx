@@ -9,14 +9,14 @@ import {
   StatusBar,
   KeyboardAvoidingView,
   Platform,
-  Alert
+  Alert,
+  Modal
 } from 'react-native';
-import { useRouter } from 'expo-router';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { studyDataProp } from '@/utils/data';
-import { goBack } from 'expo-router/build/global-state/routing';
+import { WeekType, WeekTypeRequest } from '@/utils/study-types';
 
 // Types for our data
 interface SubPoint {
@@ -36,7 +36,13 @@ interface Scripture {
   content: string;
 }
 
-export default function CreateBibleStudyWeekScreen() {
+interface ComponentProps{ 
+  onCloseModal: () => void,
+  onCreateWeeks: (WeekData:WeekTypeRequest) => void,
+  isSubmitting: boolean
+}
+
+export default function CreateBibleStudyWeekModal({onCloseModal, onCreateWeeks, isSubmitting}:ComponentProps) {
   // const router = useRouter();
   const {goBack} = useNavigation<NavigationProp<studyDataProp>>();
   
@@ -50,7 +56,7 @@ export default function CreateBibleStudyWeekScreen() {
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   
   // Loading state
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Add a new scripture field
   const addScripture = () => {
@@ -224,36 +230,30 @@ export default function CreateBibleStudyWeekScreen() {
   // Handle form submission
   const handleSubmit = () => {
     if (validateForm()) {
-      setIsSubmitting(true);
       
-      // Simulate API call
-      setTimeout(() => {
-        setIsSubmitting(false);
-        Alert.alert(
-          "Success", 
-          "Bible study week created successfully!",
-          [{ text: "OK", onPress: () => goBack() }]
-        );
-      }, 1500);
-      
-      // In a real app, you would send the data to your backend here
-      // const weekData = {
-      //   title: weekTitle,
-      //   task: weekTask,
-      //   scriptures,
-      //   main_points: mainPoints
-      // };
-      // api.post('/bible-study/weeks', weekData)...
+      const weekData = {
+          title: weekTitle,
+          task: weekTask,
+          scriptures,
+          main_points: mainPoints
+        };
+        
+        onCreateWeeks(weekData)
+      }
+    };
+    
+    const handleOnModalClose = () => {
+      onCloseModal();
     }
-  };
+    return (
+    <Modal animationType='slide' onRequestClose={handleOnModalClose}>
 
-  return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
       
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => goBack()}>
+        <TouchableOpacity onPress={() => handleOnModalClose()}>
           <Ionicons name="close" size={24} color="#333" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Create Bible Study Week</Text>
@@ -261,7 +261,7 @@ export default function CreateBibleStudyWeekScreen() {
           style={[styles.saveButton, (!weekTitle.trim() || isSubmitting) && styles.disabledButton]}
           onPress={handleSubmit}
           disabled={!weekTitle.trim() || isSubmitting}
-        >
+          >
           <Text style={styles.saveButtonText}>
             {isSubmitting ? "Saving..." : "Save"}
           </Text>
@@ -277,7 +277,7 @@ export default function CreateBibleStudyWeekScreen() {
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
-        >
+          >
           {/* Week Title */}
           <View style={styles.formSection}>
             <Text style={styles.sectionTitle}>Week Title *</Text>
@@ -286,7 +286,7 @@ export default function CreateBibleStudyWeekScreen() {
               placeholder="e.g., Week 3: Faith and Works"
               value={weekTitle}
               onChangeText={setWeekTitle}
-            />
+              />
             {errors.weekTitle && (
               <Text style={styles.errorText}>{errors.weekTitle}</Text>
             )}
@@ -340,7 +340,7 @@ export default function CreateBibleStudyWeekScreen() {
                   placeholder="e.g., James 2:14-17"
                   value={scripture.scripture}
                   onChangeText={(value) => updateScripture(index, 'scripture', value)}
-                />
+                  />
                 {errors[`scripture_${index}`] && (
                   <Text style={styles.errorText}>{errors[`scripture_${index}`]}</Text>
                 )}
@@ -354,7 +354,7 @@ export default function CreateBibleStudyWeekScreen() {
                   multiline
                   numberOfLines={4}
                   textAlignVertical="top"
-                />
+                  />
                 {errors[`content_${index}`] && (
                   <Text style={styles.errorText}>{errors[`content_${index}`]}</Text>
                 )}
@@ -419,7 +419,7 @@ export default function CreateBibleStudyWeekScreen() {
                     <TouchableOpacity 
                       style={styles.addButton}
                       onPress={() => addSubPoint(index)}
-                    >
+                      >
                       <Ionicons name="add" size={16} color="#3D5AF1" />
                       <Text style={styles.addButtonText}>Add Sub Point</Text>
                     </TouchableOpacity>
@@ -444,7 +444,7 @@ export default function CreateBibleStudyWeekScreen() {
                         placeholder="e.g., Examples of Faith in Action"
                         value={subPoint.title || ''}
                         onChangeText={(value) => updateSubPoint(index, subIndex, 'title', value)}
-                      />
+                        />
                       {errors[`subPoint_${index}_${subIndex}`] && (
                         <Text style={styles.errorText}>{errors[`subPoint_${index}_${subIndex}`]}</Text>
                       )}
@@ -467,7 +467,7 @@ export default function CreateBibleStudyWeekScreen() {
                           <TouchableOpacity 
                             style={styles.addButton}
                             onPress={() => addBulletPoint(index, subIndex)}
-                          >
+                            >
                             <Ionicons name="add" size={16} color="#3D5AF1" />
                             <Text style={styles.addButtonText}>Add Bullet</Text>
                           </TouchableOpacity>
@@ -485,7 +485,7 @@ export default function CreateBibleStudyWeekScreen() {
                               />
                               <TouchableOpacity
                                 onPress={() => removeBulletPoint(index, subIndex, bulletIndex)}
-                              >
+                                >
                                 <Ionicons name="close-circle" size={20} color="#FF3B30" />
                               </TouchableOpacity>
                             </View>
@@ -512,8 +512,11 @@ export default function CreateBibleStudyWeekScreen() {
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
+  </Modal>
   );
 }
+
+
 
 const styles = StyleSheet.create({
   container: {

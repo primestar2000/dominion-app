@@ -18,7 +18,7 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '@/context/auth-context';
-import { useAppDispatch } from '@/redux/hooks';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 // import { logoutUser } from '@/redux/auth/auth.slice';
 import { supabase } from '@/utils/lib/superbase';
 
@@ -43,10 +43,9 @@ const TEXT_SIZES = [
 ];
 
 export default function ProfileScreen() {
+  const user = useAppSelector(store => store.auth.user);
   const router = useRouter();
-  // const {setIsAuthenticated} = useAuth();
-  const dispatch = useAppDispatch();
-  // Mock user data - in a real app, this would come from your auth/state management
+
   const [userProfile, setUserProfile] = useState<UserProfile>({
     name: 'John Doe',
     email: 'john.doe@example.com',
@@ -142,7 +141,7 @@ export default function ProfileScreen() {
             // setIsAuthenticated(true);
             // dispatch(logoutUser());
             supabase.auth.signOut();
-            Alert.alert('Logged Out', 'You have been successfully logged out.');
+            // Alert.alert('Logged Out', 'You have been successfully logged out.');
             // Navigate to auth screen or similar
             // router.replace('/(auth)/login');
           }
@@ -202,7 +201,7 @@ export default function ProfileScreen() {
               <Ionicons name="camera" size={16} color="#FFFFFF" />
             </TouchableOpacity>
           </View>
-          <Text style={styles.userRole}>Admin User</Text>
+          <Text style={styles.userRole}>User is{" " + user?.role}</Text>
         </View>
         
         {/* Personal Information Section */}
