@@ -1,6 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 createAsyncThunk('update/week', 
-    async ()=>{
-
+    async (data, {rejectWithValue})=>{
+        try {
+            
+        } catch (error) {
+            
+        }
 })

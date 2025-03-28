@@ -38,7 +38,6 @@ export interface SubPoint {
     month: string;
     bible_text: Scripture[];
     introduction: string;
-    // weeks: WeekType[];
   }
   export interface StudyTypeRequest {
     id?: string;

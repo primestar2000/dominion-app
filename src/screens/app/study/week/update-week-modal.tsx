@@ -17,6 +17,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { studyDataProp } from '@/utils/data';
 import { MainPoint, Scripture, StudyType, SubPoint, WeekType, WeekTypeRequest } from '@/utils/study-types';
+import { supabase } from '@/utils/lib/superbase';
+import { databaseTables } from '@/constants/db-tables';
+import { useAppDispatch } from '@/redux/hooks';
+import { updateWeekState } from '@/redux/app/study-slice';
 
 
 interface ComponentProps{ 
@@ -26,7 +30,7 @@ interface ComponentProps{
 
 export default function UpdateWeekModal({onCloseModal, studyWeek}:ComponentProps) {
   const {goBack} = useNavigation<NavigationProp<studyDataProp>>();
-  
+  const dispatch = useAppDispatch();
   // State for form data
   const [weekTitle, setWeekTitle] = useState(studyWeek.title);
   const [weekTask, setWeekTask] = useState(studyWeek.task);
@@ -213,19 +217,36 @@ export default function UpdateWeekModal({onCloseModal, studyWeek}:ComponentProps
   const handleSubmit = () => {
     if (validateForm()) {
       
-    //   const weekData:WeekType = {
-    //       bible_study_id: studyWeek.bible_study_id,
-    //       title: weekTitle,
-    //       task: weekTask,
-    //       scriptures,
-    //       main_points: mainPoints
-    //     };
+      const weekData:WeekTypeRequest = {
+          bible_study_id: studyWeek.bible_study_id,
+          title: weekTitle,
+          task: weekTask,
+          scriptures,
+          main_points: mainPoints
+        };
         
         // onCreateWeeks(weekData)
 
-        const updateWeek = () => {
+        const updateWeek = async () => {
+          try {
+            setIsSubmitting(true);
+            const {data, error} = await supabase.from(databaseTables.bibleStudyWeeks).update(weekData).eq("id", studyWeek.id ).select("*").single();
+            if (error) {
+              Alert.alert(error.message);
+              return;
+            }
+            console.log(data);
+            dispatch(updateWeekState(data));
+            handleOnModalClose();
+            Alert.alert(`Update was successful`);
+          } catch (error) {
+            Alert.alert(`Something went wrong operation wasn't successful`)
+          }finally{
+            setIsSubmitting(false);
+          }
 
-        }
+        };
+        updateWeek();
       }
     };
     

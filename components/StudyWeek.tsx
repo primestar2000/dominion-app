@@ -26,8 +26,8 @@ const StudyWeek = ({ data, onEdit, onDelete }: Props) => {
 
 
   const handleEdit = () => {
-    // if (onEdit) onEdit(data.id)
-    setModalIsOpen(true);
+    if (onEdit) onEdit(data.id)
+    // setModalIsOpen(true);
   }
 
   const handleDelete = () => {
@@ -112,10 +112,10 @@ const StudyWeek = ({ data, onEdit, onDelete }: Props) => {
           <MaterialIcons name="chevron-right" size={20} color="#ffffff" />
         </Pressable>
       </View>
-      {
+      {/* {
         modalisOpen &&
         <UpdateWeekModal studyWeek={data}  onCloseModal={()=>{setModalIsOpen(false)}}  />
-      }
+      } */}
     </View>
   )
 }

@@ -5,6 +5,7 @@ import MediaNavigator from "./media-navigator";
 import StudiesScreen from "../screens/app/study/studies-screen";
 import StudyNavigator from "./study-navigation";
 import HomeStackNavigator from "./home-stack-navigator";
+import { BookOpenTextIcon, CalendarRangeIcon, House, LucideImagePlay } from "lucide-react-native";
 type AppTabNavigationParamList = {
     homeStackNavigator: undefined;
     eventsScreen: undefined;
@@ -16,10 +17,30 @@ const AppTabNavigation = () => {
     const Tab = createBottomTabNavigator<AppTabNavigationParamList>();
     return(
         <Tab.Navigator  screenOptions={{headerShown: false}}>
-            <Tab.Screen name={'homeStackNavigator'} component={HomeStackNavigator} />
-            <Tab.Screen name={'studyNavigator'} component={StudyNavigator} />
-            <Tab.Screen name={'eventsScreen'} component={EventsScreen} />
-            <Tab.Screen name={'mediaNavigator'} component={MediaNavigator} />
+            <Tab.Screen options={{
+                title: 'Home',
+                tabBarIcon: ({color}) => (
+                    <House color={color} />
+                ),
+            }} name={'homeStackNavigator'} component={HomeStackNavigator} />
+            <Tab.Screen options={{
+                title: 'Bible Study',
+                tabBarIcon: ({color}) => (
+                    <BookOpenTextIcon color={color} />
+                ),
+            }} name={'studyNavigator'} component={StudyNavigator} />
+            <Tab.Screen options={{
+                title: 'Events',
+                tabBarIcon: ({color}) => (
+                    <CalendarRangeIcon color={color} />
+                ),
+            }} name={'eventsScreen'} component={EventsScreen} />
+            <Tab.Screen options={{
+                title: 'Media',
+                tabBarIcon: ({color}) => (
+                    <LucideImagePlay color={color} />
+                ),
+            }} name={'mediaNavigator'} component={MediaNavigator} />
         </Tab.Navigator>
     )
 }

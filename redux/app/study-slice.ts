@@ -20,8 +20,20 @@ const StudiesSlice = createSlice({
     name: 'study',
     initialState,
     reducers: {
-        deleteStudy:  (state, action) => {
-            
+        updateStudyState:  (state, action) => {
+            const updatedStudy = action.payload as StudyType; 
+            const studiesDataUpdated = state.studies.filter(study => study.id !== updatedStudy.id)
+            state.studies = [updatedStudy, ...studiesDataUpdated];
+        },
+        updateWeekState:  (state, action) => {
+            const updatedWeek = action.payload as WeekType; 
+            const weeksDataUpdated = state.weeks.filter(week => week.id !== updatedWeek.id)
+            state.weeks = [updatedWeek, ...weeksDataUpdated];
+        },
+        deleteAndUpdateWeekState:  (state, action) => {
+            const deletedWeekId = action.payload as string; 
+            const weeksDataUpdated = state.weeks.filter(week => week.id !== deletedWeekId)
+            state.weeks = [...weeksDataUpdated];
         },
     },
     extraReducers: (builder) => {
@@ -50,5 +62,6 @@ const StudiesSlice = createSlice({
         })
     }
 });
+export const { updateStudyState, updateWeekState, deleteAndUpdateWeekState } = StudiesSlice.actions;
 const studiesReducer = StudiesSlice.reducer
 export default studiesReducer;
