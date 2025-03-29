@@ -5,6 +5,7 @@ import PrayerRequestsScreen from "../screens/app/home/prayer-request/prayer-requ
 import ProfileScreen from "../screens/app/home/profile/profile-screen";
 import AnnouncementDetailScreen from "../screens/app/home/annoucement/announcement-detail-screen";
 import DevotionalListScreen from "../screens/app/home/devotional/devotional-screen";
+import DevotionalDetailScreen from "../screens/app/home/devotional/devotional-detail-screen";
 export type HomeStackNavigatorParamList = {
  homeScreen: undefined;
  annoucementsScreen: undefined;
@@ -12,6 +13,7 @@ export type HomeStackNavigatorParamList = {
  profileScreen: undefined;
  annoucementDetailScreen: {announcementId: string};
  devotionalScreen: undefined;
+ devotionalDetailScreen: {devotionalId: string};
 }
 const HomeStackNavigator = () => {
     const Stack = createNativeStackNavigator<HomeStackNavigatorParamList>();
@@ -23,6 +25,7 @@ const HomeStackNavigator = () => {
             <Stack.Screen name={'profileScreen'} component={ProfileScreen} />
             <Stack.Screen name={'annoucementDetailScreen'} component={AnnouncementDetailScreen} />
             <Stack.Screen name={'devotionalScreen'} component={DevotionalListScreen} />
+            <Stack.Screen name={'devotionalDetailScreen'} component={DevotionalDetailScreen} />
         </Stack.Navigator>
     ) 
 }

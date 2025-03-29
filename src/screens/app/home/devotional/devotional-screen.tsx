@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   StyleSheet, 
   Text, 
@@ -6,7 +6,9 @@ import {
   FlatList, 
   TouchableOpacity, 
   SafeAreaView, 
-  StatusBar
+  StatusBar,
+  Alert,
+  RefreshControl
 } from 'react-native';
 import { useFonts } from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
@@ -16,11 +18,17 @@ import DevotionalCard from '@/components/features/devotional/devotional-card';
 import AddButtonCircle from '@/components/add-button-circle';
 import { Modal } from 'react-native';
 import CreateDevotionalModal from '@/components/features/devotional/create-devotional-modal';
+import DatePickerCustom from '@/components/my-date-picker';
+import { supabase } from '@/utils/lib/superbase';
+import { databaseTables } from '@/constants/db-tables';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import {  setDevotionalState } from '@/redux/app/devotional-slice';
+import LoaderComponent from '@/components/loaderComponent';
 
 
 
 // Sample data
-const sampleDevotionals: DevotionalItem[] = [
+export const sampleDevotionals: DevotionalItem[] = [
   {
     id: '1',
     title: 'Walking in Faith',
@@ -72,26 +80,54 @@ const sampleDevotionals: DevotionalItem[] = [
 ];
 
 const DevotionalListScreen = () => {
-  const [devotionals, setDevotionals] = useState<DevotionalItem[]>(sampleDevotionals);
+  const dispatch = useAppDispatch();
+  const {devotionals} = useAppSelector( store => store.devotionals);
+  // const [devotionals, setDevotionals] = useState<DevotionalItem[]>(sampleDevotionals);
   const [modalIsOpenned, setModalIsOpenned] = useState(false);
-  
-  // Load fonts
-  // const [fontsLoaded] = useFonts({
-  //   'Roboto-Regular': require('@expo-google-fonts/roboto/Roboto_400Regular.ttf'),
-  //   'Roboto-Bold': require('@expo-google-fonts/roboto/Roboto_700Bold.ttf'),
-  //   'Roboto-Medium': require('@expo-google-fonts/roboto/Roboto_500Medium.ttf'),
-  // });
-
-  // if (!fontsLoaded) {
-  //   return <View style={styles.container}><Text>Loading...</Text></View>;
-  // }
-
-
+  const [isFetching, setIsFetching] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const renderDevotionalItem = ({ item }: { item: DevotionalItem }) => (
     <DevotionalCard item={item} />
   );
 
+  const fetchDevotionals = async () => {
+    try {
+      setIsFetching(true);
+      console.log('fetching devotionals')
+      const {data, error} = await supabase.from(databaseTables.devotionals).select("*");
+      if (error) {
+        Alert.alert(error.message);
+      }
+      if(data){
+        dispatch(setDevotionalState(data))
+      }
+      
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Something went wrong!');
+      
+    }finally{
+      setIsFetching(false);
+      setIsRefreshing(false);
+    }
+  }
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    fetchDevotionals();
+  }
+
+  useEffect(()=>{
+    if (devotionals.length < 1) {
+      fetchDevotionals();
+    }
+  },[])
+  if (isFetching) {
+    return(
+      <LoaderComponent isLoading={true} />
+    )
+  }
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" />
@@ -100,13 +136,16 @@ const DevotionalListScreen = () => {
           <Text style={styles.headerTitle}>Daily Devotionals</Text>
           <AddButtonCircle onPress={()=>{setModalIsOpenned(true)}} enableOnAdmin={true} />
         </View>
-        
+      
         <FlatList
           data={devotionals}
           renderItem={renderDevotionalItem}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContainer}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
+          }
           ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
       </View>

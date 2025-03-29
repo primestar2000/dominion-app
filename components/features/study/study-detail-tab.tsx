@@ -147,7 +147,7 @@ const StudyDetailsTab = ({ docData }: { docData: StudyType }) => {
       style={styles.container}
       showsVerticalScrollIndicator={false}
     >
-      <View style={styles.headerContainer}>
+      {/* <View style={styles.headerContainer}>
         <LinearGradient
           colors={['#2b7cda', '#4299e1']}
           style={styles.gradientBackground}
@@ -160,7 +160,7 @@ const StudyDetailsTab = ({ docData }: { docData: StudyType }) => {
             <Text style={styles.metaText}>{docData.month}</Text>
           </View>
         </View>
-      </View>
+      </View> */}
 
       {renderBibleTexts()}
       {renderIntroduction()}
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   sectionContainer: {
     backgroundColor: 'white',
     borderRadius: 16,
-    marginHorizontal: 16,
+    marginHorizontal: 5,
     marginBottom: 16,
     padding: 16,
     shadowColor: '#000',

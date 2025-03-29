@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./auth/auth.slice";
 import studiesReducer from "./app/study-slice";
+import DevotionalReducer from "./app/devotional-slice";
 // import appReducer from "./app/app-slice"
 // // import authReducer from "./auth/authSlice"
 
@@ -9,6 +10,7 @@ const store = configureStore({
         // app: appReducer,
         auth: authReducer,
         studies: studiesReducer,
+        devotionals: DevotionalReducer
     }
 });
 

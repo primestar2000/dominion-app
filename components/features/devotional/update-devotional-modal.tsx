@@ -13,30 +13,33 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 // import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
-import { DevotionalItemRequestType } from "@/utils/devotional-types";
+import { DevotionalItem, DevotionalItemRequestType } from "@/utils/devotional-types";
 import DatePickerCustom from "@/components/my-date-picker";
 import { supabase } from "@/utils/lib/superbase";
 import { databaseTables } from "@/constants/db-tables";
 import { useAppDispatch } from "@/redux/hooks";
-import { addDevotionalState } from "@/redux/app/devotional-slice";
+import { updateDevotionalState } from "@/redux/app/devotional-slice";
 
 // Type definition for devotional item
 
 type CreateDevotionalModalProps = {
   onClose: () => void;
-  onSave: (devotional: DevotionalItemRequestType) => void;
+  devotional: DevotionalItem;
+//   onSave: (devotional: DevotionalItemRequestType) => void;
 };
 
-const CreateDevotionalModal = ({ onClose, onSave }: CreateDevotionalModalProps) => {
+const UpdateDevotionalModal = ({ onClose, devotional}: CreateDevotionalModalProps) => {
+
   const dispatch = useAppDispatch();
-  const [title, setTitle] = useState("");
-  const [date, setDate] = useState(new Date());
+
+  const [title, setTitle] = useState( devotional.title || "");
+  const [date, setDate] = useState( devotional.date || new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [verseContent, setVerseContent] = useState("");
-  const [verseScripture, setVerseScripture] = useState("");
-  const [contentParagraphs, setContentParagraphs] = useState<string[]>([""]);
-  const [foodForThought, setFoodForThought] = useState("");
-  const [prayer, setPrayer] = useState("");
+  const [verseContent, setVerseContent] = useState( devotional.memory_verse.content || "");
+  const [verseScripture, setVerseScripture] = useState(devotional.memory_verse.scripture || "");
+  const [contentParagraphs, setContentParagraphs] = useState<string[]>( devotional.contents_paragraph || [""]);
+  const [foodForThought, setFoodForThought] = useState(devotional.food_for_thought || "");
+  const [prayer, setPrayer] = useState(devotional.prayer || "");
   const [isSubmiting, setIsSubmiting] = useState(false);
 
   // Function to update a paragraph at a specific index
@@ -59,7 +62,6 @@ const CreateDevotionalModal = ({ onClose, onSave }: CreateDevotionalModalProps) 
       setContentParagraphs(newParagraphs);
     }
   };
-
 
   // Function to handle form submission
   const handleSubmit = () => {
@@ -95,23 +97,23 @@ const CreateDevotionalModal = ({ onClose, onSave }: CreateDevotionalModalProps) 
       prayer: prayer.trim()
     };
 
-    onSave(newDevotional);
-    createDevotional(newDevotional);
+    // onSave(newDevotional);
+    updateDevotional(newDevotional);
    
   };
 
-  const createDevotional = async (newDevotional:DevotionalItemRequestType) => {
+  const updateDevotional = async (newDevotional:DevotionalItemRequestType) => {
     try {
       setIsSubmiting(true);
       console.log(newDevotional);
-      const {data, error} = await supabase.from(databaseTables.devotionals).insert(newDevotional).select('*').single();
+      const {data, error} = await supabase.from(databaseTables.devotionals).update(newDevotional).eq('id', devotional.id).select('*').single();
       if(error){
         Alert.alert(error.message);
         console.log(error.message);
         return;
       }
-      dispatch(addDevotionalState(data));
-      console.log('new devotional', data);
+      // update the ui state after successful update on the backend
+     dispatch(updateDevotionalState(data));
       onClose();
     } catch (error) {
       Alert.alert('something went wrong!');
@@ -126,7 +128,7 @@ const CreateDevotionalModal = ({ onClose, onSave }: CreateDevotionalModalProps) 
       style={styles.container}
     >
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Create New Devotional</Text>
+        <Text style={styles.headerTitle}>Update Devotional</Text>
         <TouchableOpacity onPress={onClose} style={styles.closeButton}>
           <Ionicons name="close" size={24} color="#1F2937" />
         </TouchableOpacity>
@@ -251,7 +253,7 @@ const CreateDevotionalModal = ({ onClose, onSave }: CreateDevotionalModalProps) 
             onPress={handleSubmit}
             disabled={isSubmiting}
           >
-            <Text style={styles.submitButtonText}>{!isSubmiting ? 'Create Devotional' : 'Creating Devotional'}</Text>
+            <Text style={styles.submitButtonText}>{!isSubmiting ? 'Update Devotional' : 'Updating Devotional'}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -377,4 +379,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default CreateDevotionalModal;
+export default UpdateDevotionalModal;

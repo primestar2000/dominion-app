@@ -18,6 +18,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { StudyNavigatorParamList } from '@/src/navigations/study-navigation';
 import { useAppSelector } from '@/redux/hooks';
 import StudyWeek from '@/components/StudyWeek';
+import { truncateText } from '@/utils/helper-functions';
 
 
 const WeekDetailScreen = ({route}:{route: any}) => {
@@ -63,7 +64,7 @@ const WeekDetailScreen = ({route}:{route: any}) => {
           style={styles.mainPointHeader} 
           onPress={() => toggleMainPoint(index)}
         >
-          <Text style={styles.mainPointTitle}>{point.title}</Text>
+          <Text  style={styles.mainPointTitle}>{point.title}</Text>
           <Ionicons 
             name={isExpanded ? "chevron-up" : "chevron-down"} 
             size={20} 
@@ -138,7 +139,7 @@ const WeekDetailScreen = ({route}:{route: any}) => {
         <TouchableOpacity onPress={() => goBack()}>
           <Ionicons name="arrow-back" size={24} color="#333" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{weekData.title}</Text>
+        <Text style={styles.headerTitle}>{truncateText(weekData.title, 20)}</Text>
         <TouchableOpacity>
           <Ionicons name="share-outline" size={24} color="#333" />
         </TouchableOpacity>

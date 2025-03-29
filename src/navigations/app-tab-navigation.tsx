@@ -16,7 +16,11 @@ const AppTabNavigation = () => {
     // const Stack = createNativeStackNavigator<AppTabNavigationParamList>();
     const Tab = createBottomTabNavigator<AppTabNavigationParamList>();
     return(
-        <Tab.Navigator  screenOptions={{headerShown: false}}>
+        <Tab.Navigator  screenOptions={{
+            headerShown: false,
+            tabBarActiveTintColor: '#3D5AF1'
+
+        }}>
             <Tab.Screen options={{
                 title: 'Home',
                 tabBarIcon: ({color}) => (

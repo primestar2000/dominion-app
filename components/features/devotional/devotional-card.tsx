@@ -1,9 +1,12 @@
+import { HomeStackNavigatorParamList } from "@/src/navigations/home-stack-navigator";
 import { DevotionalItem } from "@/utils/devotional-types";
 import { Ionicons } from "@expo/vector-icons";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { format,  parseISO } from "date-fns";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const DevotionalCard = ({item}:{item:DevotionalItem}) => {
+      const {navigate} = useNavigation<NavigationProp<HomeStackNavigatorParamList>>();
       const formatDate = (dateString: string) => {
         try {
           return format(parseISO(dateString), 'MMMM d, yyyy');
@@ -17,7 +20,7 @@ const DevotionalCard = ({item}:{item:DevotionalItem}) => {
       onPress={() => {
         // Navigate to detail screen
         console.log(`Navigate to devotional: ${item.id}`);
-        // navigation.navigate('DevotionalDetail', { devotional: item });
+        navigate('devotionalDetailScreen', { devotionalId: item.id });
       }}
     >
       <Text style={styles.dateText}>{formatDate(item.date)}</Text>

@@ -21,6 +21,8 @@ import { ResponceMessageType } from '@/utils/other-types'
 import DefaultButton from '@/components/DefaultButton'
 import StudyWeek from '@/components/StudyWeek'
 import SectionLoader from '@/components/section-loader'
+import FloatableButton from '@/components/FloatableButton'
+import { PlusIcon } from 'lucide-react-native'
 
 const StudyWeeksTab = ({ docData }: { docData: StudyType }) => {
   const [showCreateWeekModal, setShowCreateWeekModal] = useState(false)
@@ -118,15 +120,15 @@ const StudyWeeksTab = ({ docData }: { docData: StudyType }) => {
     <View style={styles.container}>
       {user?.role === "admin" && (
         <View style={styles.addWeekButtonContainer}>
-          <DefaultButton 
+          {/* <DefaultButton 
             onPress={() => setShowCreateWeekModal(true)} 
             title={'Add Week'} 
-          />
+          /> */}
         </View>
       )}
 
       <View style={styles.weeksContainer}>
-        <Text style={styles.sectionTitle}>Available Weeks</Text>
+        {/* <Text style={styles.sectionTitle}>Available Weeks</Text> */}
         
         {isFetching ? (
           <View style={styles.loaderContainer}>
@@ -176,6 +178,7 @@ const StudyWeeksTab = ({ docData }: { docData: StudyType }) => {
           onCloseModal={() => setShowUpdateWeekModal(false)} 
         />
       )}
+      <FloatableButton icon={<PlusIcon  color={'blue'} />} onPress={() => setShowCreateWeekModal(true)}  />
     </View>
   )
 }

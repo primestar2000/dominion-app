@@ -13,12 +13,15 @@ import { StudyType } from '@/utils/study-types'
 import { useAppSelector } from '@/redux/hooks'
 import StudyDetailsTab from './features/study/study-detail-tab'
 import StudyWeeksTab from './features/study/weeks-list-tab'
+import { Ionicons } from '@expo/vector-icons'
+import { truncateText } from '@/utils/helper-functions'
 
 
 
 const CurrentStudyMain = ({ docData }: { docData: StudyType }) => {
   const [activeTab, setActiveTab] = useState<'details' | 'weeks'>('details')
   const { user } = useAppSelector(store => store.auth)
+  const {navigate, goBack} = useNavigation<NavigationProp<StudyNavigatorParamList>>();
 
   const renderTab = () => {
     switch(activeTab) {
@@ -33,6 +36,15 @@ const CurrentStudyMain = ({ docData }: { docData: StudyType }) => {
 
   return (
     <View style={styles.container}>
+       <View style={styles.header}>
+        <TouchableOpacity onPress={() => goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#333" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>{truncateText(activeTab === 'details' ? 'Study Details' : 'Study Weeks', 20)}</Text>
+        <TouchableOpacity>
+          <Ionicons name="share-outline" size={24} color="#333" />
+        </TouchableOpacity>
+      </View>
       {/* Tab Navigation */}
       <View style={styles.tabContainer}>
         <TouchableOpacity 
@@ -80,6 +92,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f7fa',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    backgroundColor: "white",
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EFEFEF',
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
   },
   tabContainer: {
     flexDirection: 'row',
